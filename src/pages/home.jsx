@@ -1,8 +1,8 @@
 import React, { useState, useRef } from "react";
-import '../style/Style.css';
+import '../styles/Style.css';
 import MainPage from './MainPage';
 // import CategoryMenu from './CategoryMenu';
-import 업종분류 from '../data/업종분류.json'
+import 업종분류 from '../config/업종분류.json'
 
 
 
