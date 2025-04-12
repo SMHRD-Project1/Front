@@ -12,7 +12,7 @@ function App() {
   function tryLogin() {
 
     axios.get(
-      'http://localhost:8082/controller/login',
+      'http://localhost:8088/controller/login',
       // get방식으로 데이터를 보낼때는 params 라는 키값으로 묶어서 보낼것
       {
         params: {
@@ -25,7 +25,7 @@ function App() {
         console.log(res.data)
       })
     // axios.post(
-    //     'http://localhost:8082/controller/login',
+    //     'http://localhost:8088/controller/login',
     //     {id:id, 
     //     pw:pw}
     // )
