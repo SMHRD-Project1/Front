@@ -1,0 +1,237 @@
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    /* ✅ 스크롤 제거 */
+    /* z-index: 1000; */
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* 전체 맵 wrapper */
+.map-wrapper {
+    position: relative;
+    /* width: 100vw; */
+    /* height: 100vh; */
+    /* overflow: hidden; */
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100vh;
+    width: 100%;
+    /* overflow: hidden;          */
+    box-sizing: border-box;
+    /* padding: 20px; */
+    color: black;
+
+
+}
+
+/* 지도 위에 올라오는 UI 레이어 */
+.ui-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    /* ✅ 지도보다 위로 */
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    pointer-events: none;
+    /*  ✅ 클릭 이벤트는 내부 버튼에만 전달되게 */
+}
+
+.ui-overlay * {
+    pointer-events: auto;
+    /* 내부 요소들은 클릭되도록 */
+}
+
+/* 버튼들이 클릭 가능하게 */
+.ui-overlay button {
+    /* pointer-events: all; */
+    pointer-events: auto;
+}
+
+
+/* 상단 영역 */
+.top-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+/* 좌측 버튼들 */
+.left-buttons {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+}
+
+/* 우측 버튼 */
+.right-buttons {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 10px;
+}
+
+/* 하단 이미지 버튼 */
+.bottom-row {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    margin-top: auto;
+    padding-bottom: 10px;
+    padding-right: 10px;
+}
+
+/* 버튼 공통 스타일 */
+.Button1 {
+    width: auto;
+    /* ✅ 반응형: 화면 너비의 20% */
+    min-width: 80px;
+    /* 너무 작아지는 것 방지 */
+    padding: 10px;
+    font-size: 15px;
+    font-weight: bold;
+    border: 1px solid black;
+    /* 테두리 얇게 */
+    border-radius: 8px;
+    background-color: white;
+    color: black;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    /* 부드러운 그림자 */
+}
+
+.Button2 {
+    width: auto;
+    /* ✅ 반응형: 화면 너비의 20% */
+    min-width: 80px;
+    /* 너무 작아지는 것 방지 */
+    padding: 10px;
+    font-size: 15px;
+    font-weight: bold;
+    border: 1px solid black;
+    /* 테두리 얇게 */
+    border-radius: 8px;
+    background-color: white;
+    color: black;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    /* 부드러운 그림자 */
+}
+
+/* 이미지 버튼 스타일 */
+.bottom-row button {
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+}
+
+/* 이미지 자체 크기 조정 */
+.image6 {
+    width: 110px;
+    height: 110px;
+    object-fit: contain;
+}
+
+/* 버튼 스타일 */
+.region-menu {
+    transform: none;         /* ❌ translateX 제거 */
+    top: 100%;               /* ✅ 버튼 아래 */
+    left: 0;
+}
+/* 메뉴 스타일 */
+.category-menu-container {
+    position: absolute;
+    top: 100%;   /* ✅ 버튼 아래 */
+    left: 0;
+    z-index: 10000;
+    display: flex;
+    background-color: white;
+}
+/* 대분류 */
+.category-menu {
+    position: relative;
+    /* ✅ 수평 정렬을 위한 기준점 */
+    display: flex;
+    flex-direction: column;
+    min-width: 150px;
+    padding: 10px;
+    background-color: white;
+    border: 1px solid #ddd;
+
+}
+
+.category-item {
+    position: relative;
+    /* ✅ 중분류의 기준 좌표 */
+}
+
+/* 중분류 */
+.subcategory-menu {
+    position: absolute;
+    /* ✅ 기준은 category-menu */
+    top: 0;
+    left: 100%;
+    /* ✅ 대분류 너비만큼 띄우기 */
+    display: flex;
+    flex-direction: column;
+    min-width: 150px;
+    padding: 10px;
+    background-color: white;
+    border: 1px solid #ddd;
+    z-index: 10001;
+}
+
+.subcategory-item {
+    position: relative;
+    /* ✅ 소분류의 기준 좌표 */
+}
+
+/* 소분류 */
+.subsubcategory-menu {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    /* ✅ 중분류 너비만큼 추가로 띄우기 */
+    display: flex;
+    flex-direction: column;
+    min-width: 150px;
+    padding: 10px;
+    background-color: white;
+    border: 1px solid #ddd;
+    z-index: 10002;
+}
+
+.category-item,
+.subcategory-item,
+.subsubcategory-item {
+    padding: 5px 10px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.category-item:hover,
+.subcategory-item:hover,
+.subsubcategory-item:hover {
+    background-color: #f0f0f0;
+}
+
+/* 카테고리와 지역 버튼 */
+.category-button-wrapper {
+    position: relative;  /* ✅ 기준점 */
+    display: inline-block;
+}

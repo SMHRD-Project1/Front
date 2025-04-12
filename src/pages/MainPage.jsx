@@ -1,10 +1,10 @@
 /* global naver */
-import '../styles/main.css';
+import '../style/main.css';
 import axios from 'axios'
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useImperativeHandle, forwardRef, useEffect, useRef, useState } from 'react';
 
 
-const MainPage = () => {
+const MainPage =  forwardRef((props, ref) => {
 
   let result = '';
   const polygonRef = useRef(null);
@@ -220,7 +220,11 @@ const MainPage = () => {
     });
   };
 
-
+  // ✅ 외부에서 접근 가능한 함수들 정의
+  useImperativeHandle(ref, () => ({
+    dongEvent,
+    btnEvent
+  }));
 
 
   return (
@@ -231,6 +235,6 @@ const MainPage = () => {
       </div>
     </div>
   );
-};
+});
 
 export default MainPage;
