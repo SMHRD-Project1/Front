@@ -1,5 +1,5 @@
 /* global naver */
-import '../style/main.css';
+import '../styles/main.css';
 import axios from 'axios'
 import React, { useImperativeHandle, forwardRef, useEffect, useRef, useState } from 'react';
 
@@ -78,7 +78,7 @@ const MainPage =  forwardRef((props, ref) => {
   const btnEvent = () => {
     btnFlagRef.current = !btnFlagRef.current;
     setBtnFlag(btnFlagRef.current);
-    btnRef.current.innerText = btnFlagRef.current ? "Markar Off" : "Markar On";
+    // btnRef.current.innerText = btnFlagRef.current ? "Markar Off" : "Markar On";
   };
 
 
@@ -230,8 +230,8 @@ const MainPage =  forwardRef((props, ref) => {
   return (
     <div className='main'>
       <div id="map">
-        <button className="map-button" ref={btnRef} onClick={btnEvent}>Markar On</button>
-        <button className="map-button" onClick={dongEvent} >양동</button>
+        {/* <button className="map-button" ref={btnRef} onClick={btnEvent}>Markar On</button> */}
+        {/* <button className="map-button" onClick={dongEvent} >양동</button> */}
       </div>
     </div>
   );

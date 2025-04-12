@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import SalesChartEchart from './chart/SalesChartEchart';
 import ExampleDonut from "./chart/ExampleDonut";
 
-import Home from "./page/home";
+import Home from "./pages/home";
 // import Main from "./page/Detail";
 // import Main from "./page/MyPage";
 // import Main from "./page/Sale";
