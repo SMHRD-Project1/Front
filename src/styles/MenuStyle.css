@@ -1,0 +1,47 @@
+.menu-bar {
+    display: flex;
+    gap: 20px;
+    background-color: #f1f1f1;
+    padding: 10px;
+    font-family: sans-serif;
+    position: relative;
+  }
+  
+  .menu-item {
+    position: relative;
+    padding: 8px 12px;
+    cursor: pointer;
+    background-color: #fff;
+    border-radius: 4px;
+  }
+  
+  .submenu {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    z-index: 10;
+    white-space: nowrap;
+    padding: 8px;
+  }
+  
+  .submenu-item {
+    position: relative;
+    padding: 6px 10px;
+    cursor: pointer;
+  }
+  
+  .sub-submenu {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    background-color: #eee;
+    padding: 6px;
+    border: 1px solid #ccc;
+  }
+  
+  .sub-submenu-item {
+    padding: 4px 8px;
+  }
+  
