@@ -1,6 +1,6 @@
 /* 챗봇 대화창 스타일 */
 .chatbot-window {
-    position: absolute;
+    position: fixed; /* 변경: absolute → fixed */
     bottom: 120px;
     /* 버튼 위에 위치하도록 */
     right: 20px;

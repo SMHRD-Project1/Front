@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import '../styles/ChatbotWindow.css';
+import ChatBot from '../ChatBot';
+
 
 const ChatbotWindow = ({ isVisible, toggleVisibility }) => {
     return (
@@ -8,8 +10,7 @@ const ChatbotWindow = ({ isVisible, toggleVisibility }) => {
                 <button className="close-btn" onClick={toggleVisibility}>X</button>
             </div>
             <div className="chatbot-body">
-                <p>챗봇 대화창이 여기에 표시됩니다.</p>
-                {/* 실제 챗봇 대화 내용이 표시될 수 있습니다 */}
+                <ChatBot />
             </div>
         </div>
     );
