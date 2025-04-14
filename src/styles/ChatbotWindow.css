@@ -1,0 +1,49 @@
+/* 챗봇 대화창 스타일 */
+.chatbot-window {
+    position: absolute;
+    bottom: 120px;
+    /* 버튼 위에 위치하도록 */
+    right: 20px;
+    /* 우측에 위치하도록 */
+    width: 300px;
+    height: 400px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    transform: translateY(100%);
+    /* 처음에는 보이지 않게 */
+    opacity: 0;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+    z-index: 10001;
+    /* 다른 UI 요소보다 위 */
+}
+
+/* 슬라이드 업 애니메이션 */
+.chatbot-window.slide-up {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto; /* 클릭 가능하도록 */
+}
+
+/* 슬라이드 다운 + 클릭 차단 */
+.chatbot-window.slide-down {
+    transform: translateY(100%);
+    opacity: 0;
+    pointer-events: none; /* 안 보일 때 클릭 차단 */
+}
+
+.chatbot-window.hidden {
+    pointer-events: none;
+    /* 보이지 않을 때 클릭 차단도 제거 */
+    opacity: 0;
+    transform: translateY(100%);
+    transition: all 0.3s ease;
+}
+
+.chatbot-window.visible {
+    pointer-events: auto;
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.3s ease;
+}
