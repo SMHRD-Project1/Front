@@ -4,4 +4,9 @@
 
 
 
+npm install --save echarts-for-react
+npm install --save echarts
+npm install @google-cloud/dialogflow --prefix server
+npm install concurrently
+npm install cors
 npm install react-router-dom
