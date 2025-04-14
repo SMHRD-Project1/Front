@@ -4,6 +4,9 @@ import SalesChartEchart from './chart/SalesChartEchart';
 import ExampleDonut from "./chart/ExampleDonut";
 import ChatBot from "./ChatBot"
 import Home from "./pages/home";
+import StackedLineChart from "./conponents/StackedLineChart";
+import Login from "./conponents/Login";
+
 
 function App() {
   return (
@@ -21,6 +24,8 @@ function App() {
     <Router> 
       <Routes> 
         <Route path="/" element={<Home />} />
+        <Route path="/stackedlinechart" element={<StackedLineChart />} />
+        {/* <Route path="/login" element={<Login />} /> */}
         {/* <Route path="/mypage" element={<MyPage />} /> */}
       </Routes>
     </Router>

@@ -1,9 +1,11 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import '../styles/Style.css';
 import MainPage from './MainPage';
 import 업종분류 from '../config/업종분류.json'
 // import ChatbotWindow from "./ChatbotWindow";
 import ChatBot from "../ChatBot";
+import { useNavigate } from 'react-router-dom';  // 라우터 네비게이션을 위해 추가
+
 
 
 const Home = () => {
@@ -16,6 +18,9 @@ const Home = () => {
     const [selectedDong, setSelectedDong] = useState(null);  // 동 설정에 대한 선택
     const mainPageRef = useRef();
     const [isChatVisible, setIsChatVisible] = useState(false); // 챗봇 대화창 표시 상태
+    const navigate = useNavigate();  // 네비게이션 훅 추가
+    const [text1, setText1] = useState("");  // 업종
+    const [text2, setText2] = useState("");  // 지역(동)
 
     const dongList = [
         "광천동", "금호동", "농성동", "동천동", "상무1동", "상무2동",
@@ -34,12 +39,14 @@ const Home = () => {
 
     // btn2Event의 로직을 Home 컴포넌트로 가져옴
     const handleRegionAndCategory = () => {
-        if (mainPageRef.current?.btn2Event) {  // btn2Event로 함수명 변경
-            const text = `${selectedDong || ''} ${selectedCategory || ''}`.trim();
-            if (text) {
-                mainPageRef.current.btn2Event(text);  // text 형태로 전달
-            }
+        if (mainPageRef.current?.btn2Event) {
+            mainPageRef.current.btn2Event(text1, text2);
         }
+    };
+
+    // 로그인 페이지로 이동하는 함수
+    const handleLoginClick = () => {
+        navigate('/login');  // /login 경로로 이동
     };
 
     React.useEffect(() => {
@@ -52,6 +59,23 @@ const Home = () => {
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
+
+    useEffect(() => {
+        if (text1) {
+            handleRegionAndCategory();
+            console.log("텍스트1" , text1); 
+        }
+    }, [text1]);
+
+
+    // 텍스트 값이 업데이트된 후 handleRegionAndCategory를 호출하기 위해 useEffect 사용
+    useEffect(() => {
+        if (text2) {
+            handleRegionAndCategory();
+        }
+    }, [text2]);  // text2가 변경될 때마다 호출됨
+
+
 
     const handleButtonClick = () => {
         setIsChatVisible(!isChatVisible);  // 챗봇 대화창 숨기기
@@ -99,10 +123,10 @@ const Home = () => {
                                                                                 className="subsubcategory-item"
                                                                                 onClick={() => {
                                                                                     setSelectedCategory(detail);
+                                                                                    setText1(detail);  // ✅ text1에 저장
                                                                                     setShowCategoryMenu(false);
                                                                                     setHoveredMain(null);
                                                                                     setHoveredSub(null);
-                                                                                    handleRegionAndCategory(); // 업종 선택 시
                                                                                 }}
                                                                             >
                                                                                 {detail}
@@ -142,10 +166,14 @@ const Home = () => {
                                                 onMouseEnter={() => setHoveredMain(option)}
                                                 onClick={() => {
                                                     if (option === "다각형 설정") {
-                                                        setSelectedRegion(`다각형 설정${selectedDong ? ` (${selectedDong})` : ''}`);
-                                                        handleRegionAndCategory(); // 다각형 설정 시
+                                                        // 동 이름은 필요 없으므로 selectedDong이나 text2는 건드리지 않음
+                                                        setSelectedRegion("다각형 설정");
+                                                        handleRegionAndCategory();  // 이건 polygon 그리기용 이벤트 발생용
                                                         setShowRegionMenu(false);
                                                         setHoveredMain(null);
+                                                        setSelectedDong(option);
+                                                        setText2(option);  // ✅ text2에 저장
+                                                        console.log("👉 텍스트:", text2);
                                                     } else if (option === "동 설정") {
                                                         setHoveredMain("동 설정");
                                                     }
@@ -164,9 +192,11 @@ const Home = () => {
                                                                     e.stopPropagation();
                                                                     setSelectedRegion(dong);
                                                                     setSelectedDong(dong);
+                                                                    setText2(dong);  // ✅ text2에 저장
                                                                     setShowRegionMenu(false);
                                                                     setHoveredMain(null);
                                                                     handleRegionAndCategory(); // 동 선택 시
+                                                                    console.log("👉 텍스트2222:", text2);
                                                                 }}
                                                             >
                                                                 {dong}
@@ -184,29 +214,29 @@ const Home = () => {
 
 
                     <div className="right-buttons">
-                        <button className="Button2" onClick={() => alert("Pressed!")}>로그인</button>
+                        <button className="Button2" onClick={handleLoginClick}>로그인</button>
                     </div>
                 </div>
 
 
-            <div className="bottom-row">
-                <button className="image-button" onClick={handleButtonClick}>
-                    <img
-                        src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/7BrQmBK8fB/8qkztdd1_expires_30_days.png"
-                        className="image6"
-                        alt="logo"
-                    />
-                </button>
+                <div className="bottom-row">
+                    <button className="image-button" onClick={handleButtonClick}>
+                        <img
+                            src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/7BrQmBK8fB/8qkztdd1_expires_30_days.png"
+                            className="image6"
+                            alt="logo"
+                        />
+                    </button>
+                </div>
             </div>
-        </div>
 
-        {/* 챗봇 창을 조건부 렌더링으로 변경 */}
-        {isChatVisible && (
-            <div className="chat-container">
-                <ChatBot />
-            </div>
-        )}
-    </div>
+            {/* 챗봇 창을 조건부 렌더링으로 변경 */}
+            {isChatVisible && (
+                <div className="chat-container">
+                    <ChatBot />
+                </div>
+            )}
+        </div>
     );
 };
 

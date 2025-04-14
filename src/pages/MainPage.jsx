@@ -211,16 +211,16 @@ const MainPage = forwardRef((props, ref) => {
       });
   }, []);
 
-  const btn2Event = (text) => {
+  const btn2Event = (text1, text2) => {
     clearAll();
-    console.log(text);
-    if (text === '다각형 설정') {
+    console.log(text1, text2);
+    if (text2 === '다각형 설정') {
       btnFlagRef.current = true;
     } else {
       btnFlagRef.current = false;
-      if (text != '동 설정') {
+      if (text2 != '동 설정') {
         dong.forEach((item) => {
-          if (item.properties.adm_nm === text) {
+          if (item.properties.adm_nm === text2) {
             dongPositionsRef.current = item.geometry.coordinates[0];
             clearAll();
             drowPolygon(dongPositionsRef.current);
