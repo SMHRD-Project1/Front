@@ -147,6 +147,7 @@ const Home = () => {
                                                         setShowRegionMenu(false);
                                                         setHoveredMain(null);
                                                     } else if (option === "동 설정") {
+
                                                         setHoveredMain("동 설정");
                                                     }
                                                 }}
@@ -167,6 +168,7 @@ const Home = () => {
                                                                     setShowRegionMenu(false);
                                                                     setHoveredMain(null);
                                                                     handleRegionAndCategory(); // 동 선택 시
+
                                                                 }}
                                                             >
                                                                 {dong}
@@ -187,7 +189,6 @@ const Home = () => {
                         <button className="Button2" onClick={() => alert("Pressed!")}>로그인</button>
                     </div>
                 </div>
-
 
             <div className="bottom-row">
                 <button className="image-button" onClick={handleButtonClick}>

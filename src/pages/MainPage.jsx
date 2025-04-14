@@ -87,8 +87,7 @@ const MainPage = forwardRef((props, ref) => {
   const makerEvent = () => {
     btnFlagRef.current = !btnFlagRef.current;
     setBtnFlag(btnFlagRef.current);
-  };
-
+    
   //  마커
   useEffect(() => {
     if (!mapRef.current) return;
