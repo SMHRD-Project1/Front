@@ -21,6 +21,12 @@ function App() {
     return randomId;
   })
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && question.trim() !== '') {
+      SendQuestion();
+    }
+  };
+
   function SendQuestion() {
     console.log("보낼 질문:", question);
 
@@ -55,6 +61,7 @@ function App() {
       }).catch((err) => console.log("에러발생", err))
 
     setFlag("true");
+    setQuestion("");  // 입력창 비우기
   }
 
   useEffect(() => {
@@ -89,9 +96,19 @@ function App() {
       }).catch((err) => console.error("에러발생", err))
   }, []);
 
+  // 채팅 영역에 대한 ref 추가
+  const chatAreaRef = useRef(null);
+
+  // 메시지 목록이 업데이트될 때마다 스크롤을 맨 아래로 이동
+  useEffect(() => {
+    if (chatAreaRef.current) {
+      chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
+    }
+  }, [messages]); // messages 배열이 변경될 때마다 실행
+
   return (
     <div className='chat'>
-      <div className="chatArea">
+      <div className="chatArea" ref={chatAreaRef}>
         {messages.map((msg, index) => (
           <div key={index} className={msg.sender === 'user' ? 'userMessage' : 'botMessage'}>
             {msg.sender === 'user' ? '나: ' : '창창이: '}
@@ -105,6 +122,7 @@ function App() {
           placeholder='할 말 입력'
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
+          onKeyDown={handleKeyDown}
         />
         <button onClick={SendQuestion}>입력</button>
       </div>

@@ -1,15 +1,16 @@
 .chat {
-  width: 400px;
-  margin: 30px auto;
+  width: 350px;
+  margin: 0;
   border: 1px solid #ccc;
   border-radius: 10px;
   padding: 15px;
   background-color: #f9f9f9;
   font-family: 'Arial', sans-serif;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
 }
 
 .chatArea {
-  height: 400px;
+  height: 300px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -67,4 +68,64 @@
 
 .inputChat button:hover {
   background-color: #45a049;
+}
+
+/* 챗봇 컨테이너 스타일 추가 */
+.chat-container {
+  position: fixed;
+  bottom: 135px; 
+  right: 40px;
+  z-index: 10001;
+  animation: slideUp 0.3s ease-out forwards;
+}
+
+/* 슬라이드 업 애니메이션 */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 챗봇 창 헤더 */
+.chatbot-header {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* 챗봇 내용 영역 */
+.chatbot-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: calc(100% - 40px); /* 헤더를 제외한 공간 */
+  overflow-y: auto;
+}
+
+/* 메시지 스타일 */
+.userMessage {
+  align-self: flex-end;
+  background-color: #dcf8c6;
+  color: #000;
+  padding: 10px 14px;
+  border-radius: 18px;
+  border-bottom-left-radius: 0;
+  max-width: 70%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.botMessage {
+  align-self: flex-start;
+  background-color: #fff;
+  color: #000;
+  padding: 10px 14px;
+  border-radius: 18px;
+  border-bottom-right-radius: 0;
+  border: 1px solid #ddd;
+  max-width: 70%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
