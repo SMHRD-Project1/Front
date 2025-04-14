@@ -15,7 +15,7 @@ app.post("/api/chat",async(req, res)=> {
 
     const {message, sessionId} = req.body;
     const sessionClient = new SessionsClient({
-        keyFilename: '../f--tvdm-99cfc39455c5.json'
+        keyFilename: './f--tvdm-99cfc39455c5.json'
     });
     const sessionPath = sessionClient.projectAgentSessionPath('f--tvdm', sessionId);
 
