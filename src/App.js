@@ -25,7 +25,7 @@ function App() {
       <Routes> 
         <Route path="/" element={<Home />} />
         <Route path="/stackedlinechart" element={<StackedLineChart />} />
-        {/* <Route path="/login" element={<Login />} /> */}
+        <Route path="/login" element={<Login />} />
         {/* <Route path="/mypage" element={<MyPage />} /> */}
       </Routes>
     </Router>

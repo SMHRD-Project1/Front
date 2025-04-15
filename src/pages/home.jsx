@@ -5,6 +5,9 @@ import 업종분류 from '../config/업종분류.json'
 // import ChatbotWindow from "./ChatbotWindow";
 import ChatBot from "../ChatBot";
 import { useNavigate } from 'react-router-dom';  // 라우터 네비게이션을 위해 추가
+import 업종코드목록 from '../config/업종코드목록.json';
+import KakaoLogin from 'react-kakao-login';
+import axios from 'axios';
 
 
 
@@ -18,6 +21,7 @@ const Home = () => {
     const [selectedDong, setSelectedDong] = useState(null);  // 동 설정에 대한 선택
     const mainPageRef = useRef();
     const [isChatVisible, setIsChatVisible] = useState(false); // 챗봇 대화창 표시 상태
+    const [isClosing, setIsClosing] = useState(false); // 챗봇 닫기 애니메이션 상태
     const navigate = useNavigate();  // 네비게이션 훅 추가
     const [text1, setText1] = useState("");  // 업종
     const [text2, setText2] = useState("");  // 지역(동)
@@ -60,34 +64,108 @@ const Home = () => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
+    const [업종코드, set업종코드] = useState("");
+    const get업종코드 = (이름) => {
+        let match = 업종코드목록.find(item => item.업종이름 === 이름);
+        
+        if (!match) {
+            match = 업종코드목록.find(item => 이름.includes(item.업종이름) || item.업종이름.includes(이름));
+        }
+        
+        return match ? match.업종코드 : "";
+    };
+
     useEffect(() => {
         if (text1) {
-            handleRegionAndCategory();
-            console.log("텍스트1" , text1); 
+            const code = get업종코드(text1);
+            set업종코드(code);
         }
     }, [text1]);
 
+    useEffect(() => {
+        if (업종코드) {
+            handleRegionAndCategory();
+        }
+    }, [업종코드]);
 
-    // 텍스트 값이 업데이트된 후 handleRegionAndCategory를 호출하기 위해 useEffect 사용
     useEffect(() => {
         if (text2) {
             handleRegionAndCategory();
         }
-    }, [text2]);  // text2가 변경될 때마다 호출됨
-
-
+    }, [text2]);
 
     const handleButtonClick = () => {
-        setIsChatVisible(!isChatVisible);  // 챗봇 대화창 숨기기
+        if (isChatVisible) {
+            setIsClosing(true);
+            // 애니메이션 완료 후 컴포넌트 제거
+            setTimeout(() => {
+                setIsClosing(false);
+                setIsChatVisible(false);
+            }, 300); // 애니메이션 지속 시간과 동일하게 설정
+        } else {
+            setIsChatVisible(true);
+        }
     };
 
+    const handleCategorySelect = async (detail) => {
+        setSelectedCategory(detail);
+        const code = get업종코드(detail);
+        setText1(detail);
+        set업종코드(code);
+        setShowCategoryMenu(false);
+        setHoveredMain(null);
+        setHoveredSub(null);
+
+        setTimeout(() => {
+            if (mainPageRef.current?.btn2Event) {
+                mainPageRef.current.btn2Event(detail, text2);
+            }
+        }, 100);
+    };
+
+    const handleRegionSelect = (option) => {
+        setSelectedRegion(option);
+        setText2(option);
+        setShowRegionMenu(false);
+        setHoveredMain(null);
+        
+        setTimeout(() => {
+            if (mainPageRef.current?.btn2Event) {
+                mainPageRef.current.btn2Event(text1, option);
+            }
+        }, 100);
+    };
+
+    // 카카오 로그인 성공 시 호출되는 함수
+    const responseKakao = (response) => {
+        if (!response || !response.profile) {
+            console.error("로그인 응답이 유효하지 않습니다");
+            return;
+        }
+        
+        const kakaoId = response.profile.id;
+        const nickname = response.profile.properties.nickname;
+
+        axios.post('http://localhost:8088/controller/login',
+            { id: kakaoId, nickname: nickname })
+            .then((res) => {
+                // 로그인 성공 처리
+            })
+            .catch((err) => {
+                console.error('로그인 처리 중 오류가 발생했습니다:', err);
+            });
+    };
+
+    const errorKakao = (error) => {
+        console.error('카카오 로그인 실패:', error);
+    };
 
     return (
         <div className="map-wrapper">
 
-            <MainPage ref={mainPageRef} />
+            <MainPage ref={mainPageRef} 업종코드={업종코드} />
 
-            {/* ✅ 지도 위에 떠있는 버튼들 */}
+            {/* 지도 위에 떠있는 버튼들 */}
             <div className="ui-overlay">
                 <div className="top-row">
                     <div className="left-buttons">
@@ -121,13 +199,7 @@ const Home = () => {
                                                                             <div
                                                                                 key={detail}
                                                                                 className="subsubcategory-item"
-                                                                                onClick={() => {
-                                                                                    setSelectedCategory(detail);
-                                                                                    setText1(detail);  // ✅ text1에 저장
-                                                                                    setShowCategoryMenu(false);
-                                                                                    setHoveredMain(null);
-                                                                                    setHoveredSub(null);
-                                                                                }}
+                                                                                onClick={() => handleCategorySelect(detail)}
                                                                             >
                                                                                 {detail}
                                                                             </div>
@@ -165,23 +237,13 @@ const Home = () => {
                                                 className="category-item"
                                                 onMouseEnter={() => setHoveredMain(option)}
                                                 onClick={() => {
-                                                    if (option === "다각형 설정") {
-                                                        // 동 이름은 필요 없으므로 selectedDong이나 text2는 건드리지 않음
-                                                        setSelectedRegion("다각형 설정");
-                                                        handleRegionAndCategory();  // 이건 polygon 그리기용 이벤트 발생용
-                                                        setShowRegionMenu(false);
-                                                        setHoveredMain(null);
-                                                        setSelectedDong(option);
-                                                        setText2(option);  // ✅ text2에 저장
-                                                        console.log("👉 텍스트:", text2);
-                                                    } else if (option === "동 설정") {
-                                                        setHoveredMain("동 설정");
+                                                    if (option === "다각형 설정" || option === "동 설정") {
+                                                        handleRegionSelect(option);
                                                     }
                                                 }}
                                             >
                                                 {option}
 
-                                                {/* ✅ 동 설정 시 중분류 (동 목록) 옆으로 표시 */}
                                                 {hoveredMain === "동 설정" && option === "동 설정" && (
                                                     <div className="subcategory-menu">
                                                         {dongList.map((dong) => (
@@ -190,13 +252,7 @@ const Home = () => {
                                                                 className="subcategory-item"
                                                                 onClick={(e) => {
                                                                     e.stopPropagation();
-                                                                    setSelectedRegion(dong);
-                                                                    setSelectedDong(dong);
-                                                                    setText2(dong);  // ✅ text2에 저장
-                                                                    setShowRegionMenu(false);
-                                                                    setHoveredMain(null);
-                                                                    handleRegionAndCategory(); // 동 선택 시
-                                                                    console.log("👉 텍스트2222:", text2);
+                                                                    handleRegionSelect(dong);
                                                                 }}
                                                             >
                                                                 {dong}
@@ -212,12 +268,23 @@ const Home = () => {
                         </div>
                     </div>
 
-
                     <div className="right-buttons">
-                        <button className="Button2" onClick={handleLoginClick}>로그인</button>
+                        <KakaoLogin
+                            token={process.env.REACT_APP_KAKAO_JAVASCRIPT_KEY}
+                            onSuccess={responseKakao}
+                            onFailure={errorKakao}
+                            useLoginForm={true}
+                            render={({ onClick }) => (
+                                <button 
+                                    className="Button2" 
+                                    onClick={onClick}
+                                >
+                                    로그인
+                                </button>
+                            )}
+                        />
                     </div>
                 </div>
-
 
                 <div className="bottom-row">
                     <button className="image-button" onClick={handleButtonClick}>
@@ -231,8 +298,8 @@ const Home = () => {
             </div>
 
             {/* 챗봇 창을 조건부 렌더링으로 변경 */}
-            {isChatVisible && (
-                <div className="chat-container">
+            {(isChatVisible || isClosing) && (
+                <div className={`chat-container ${isClosing ? 'hide' : 'show'}`}>
                     <ChatBot />
                 </div>
             )}

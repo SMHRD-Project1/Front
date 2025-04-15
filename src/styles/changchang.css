@@ -76,7 +76,16 @@
   bottom: 135px; 
   right: 40px;
   z-index: 10001;
+}
+
+/* 챗봇 열릴 때 애니메이션 */
+.chat-container.show {
   animation: slideUp 0.3s ease-out forwards;
+}
+
+/* 챗봇 닫힐 때 애니메이션 */
+.chat-container.hide {
+  animation: slideDown 0.3s ease-out forwards;
 }
 
 /* 슬라이드 업 애니메이션 */
@@ -88,6 +97,18 @@
   to {
     transform: translateY(0);
     opacity: 1;
+  }
+}
+
+/* 슬라이드 다운 애니메이션 */
+@keyframes slideDown {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(100%);
+    opacity: 0;
   }
 }
 
