@@ -10,6 +10,10 @@ import Login from "./conponents/Login";
 
 function App() {
   return (
+    
+    // <div>
+    //   <Login/>
+    // </div>
 
     // <div>
     //   <ChatBot></ChatBot>
@@ -20,7 +24,6 @@ function App() {
     //   <SalesChartEchart 업종이름="돼지고기 구이/찜" />
     // </div>
 
-    // 메인 화면
     <Router> 
       <Routes> 
         <Route path="/" element={<Home />} />

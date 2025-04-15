@@ -130,8 +130,7 @@ const MainPage = forwardRef(({ 업종코드 }, ref) => {
   const makerEvent = () => {
     btnFlagRef.current = !btnFlagRef.current;
     setBtnFlag(btnFlagRef.current);
-  };
-
+    
   //  마커
   useEffect(() => {
     if (!mapRef.current) return;
