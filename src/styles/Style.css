@@ -351,3 +351,118 @@ body {
     display: flex;
     gap: 10px;  /* 업종과 지역 버튼 사이의 간격과 동일하게 설정 */
 }
+
+.toggle-container {
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 400px;
+    height: calc(100vh - 60px);
+    background-color: white;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.toggle-content {
+    padding: 20px;
+}
+
+.toggle-content h2 {
+    margin: 0 0 20px 0;
+    color: #333;
+}
+
+.side-content {
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 1001;
+}
+
+.side-section {
+    display: flex;
+    transition: transform 0.3s ease;
+}
+
+.side-section.open {
+    transform: translateX(0);
+}
+
+.side-toggle-button {
+    writing-mode: tb-rl;
+    -webkit-writing-mode: vertical-rl;
+    -ms-writing-mode: tb-rl;
+    transform: rotate(180deg);
+    background-color: white;
+    border: 1px solid #ddd;
+    padding: 15px 8px;
+    height: auto;
+    min-height: 80px;
+    cursor: pointer;
+    border-radius: 0 4px 4px 0;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+    text-align: center;
+    z-index: 1002;
+    transition: transform 0.3s ease;
+}
+
+.side-toggle-button:hover {
+    background-color: #f8f9fa;
+}
+
+.side-toggle-button.active {
+    background-color: #e9ecef;
+    border-left: 3px solid #007bff;
+}
+
+.toggle-container {
+    position: absolute;
+    left: 100%;
+    width: 400px;
+    height: 100vh;
+    background-color: white;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+}
+
+/* 첫 번째 섹션(상세페이지)이 열려있고 두 번째 섹션(부동산)도 열려있을 때 */
+.side-section:first-child.open + .side-section.open .toggle-container {
+    transform: translateX(400px);
+}
+
+/* 부동산 토글 버튼 스타일 */
+.real-estate-toggle {
+    position: fixed;
+    left: 0;
+    top: 58%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 120px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-left: none;
+    border-radius: 0 4px 4px 0;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    writing-mode: vertical-lr;
+    text-orientation: upright;
+    font-size: 14px;
+    text-align: center;
+    z-index: 1005;
+}
+
+.real-estate-toggle.active {
+    background-color: #e9ecef;
+    border-left: 3px solid #007bff;
+}
+
+.real-estate-toggle:hover {
+    background-color: #f8f9fa;
+}

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import '../styles/Style.css';
 import MainPage from './MainPage';
-import RealEstate from '../components/RealEstate';
+import RealEstate from './RealEstate';
 import 업종분류 from '../config/업종분류.json'
 // import ChatbotWindow from "./ChatbotWindow";
 import ChatBot from "../ChatBot";
@@ -31,6 +31,7 @@ const Home = () => {
     const [showRealEstate, setShowRealEstate] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userInfo, setUserInfo] = useState(null);
+    const [showDetailPage, setShowDetailPage] = useState(false);
 
     const dongList = [
         "광천동", "금호동", "농성동", "동천동", "상무1동", "상무2동",
@@ -120,7 +121,7 @@ const Home = () => {
                 console.error("로그인 응답이 유효하지 않습니다");
                 return;
             }
-            
+
             const kakaoId = response.profile.id;
             const nickname = response.profile.properties.nickname;
 
@@ -157,7 +158,7 @@ const Home = () => {
     useEffect(() => {
         const savedLoginState = localStorage.getItem('isLoggedIn');
         const savedUserInfo = localStorage.getItem('userInfo');
-        
+
         if (savedLoginState === 'true' && savedUserInfo) {
             setIsLoggedIn(true);
             setUserInfo(JSON.parse(savedUserInfo));
@@ -224,14 +225,30 @@ const Home = () => {
     };
 
     return (
-        <div className="map-wrapper">
+        <div className="home-container">
             <MainPage
                 ref={mainPageRef}
+                selectedCategory={selectedCategory}
+                selectedRegion={selectedRegion}
+                selectedDong={selectedDong}
                 업종코드={업종코드}
                 onPolygonSet={handlePolygonSet}
             />
-
-            {showRealEstate && <RealEstate />}
+            <DetailPage 
+                selectedRegion={selectedRegion}
+                selectedDong={selectedDong}
+                selectedCategory={selectedCategory}
+            />
+            <button 
+                className={`real-estate-toggle ${showRealEstate ? 'active' : ''}`}
+                onClick={() => setShowRealEstate(!showRealEstate)}
+            >
+                부동산정보
+            </button>
+            <RealEstate 
+                isOpen={showRealEstate}
+                onClose={() => setShowRealEstate(!showRealEstate)}
+            />
 
             {/* 지도 위에 떠있는 버튼들 */}
             <div className="ui-overlay">
@@ -334,28 +351,19 @@ const Home = () => {
                                 </div>
                             )}
                         </div>
-
-                        <div className="category-button-wrapper">
-                            <button
-                                className="Button1"
-                                onClick={() => setShowRealEstate(!showRealEstate)}
-                            >
-                                {showRealEstate ? '지도 보기' : '부동산'}
-                            </button>
-                        </div>
                     </div>
 
                     <div className="right-buttons">
                         {isLoggedIn ? (
                             <div className="login-buttons">
-                                <button 
-                                    className="Button2" 
+                                <button
+                                    className="Button2"
                                     onClick={handleMyPageClick}
                                 >
                                     마이페이지
                                 </button>
-                                <button 
-                                    className="Button2" 
+                                <button
+                                    className="Button2"
                                     onClick={handleLogout}
                                 >
                                     로그아웃
@@ -368,8 +376,8 @@ const Home = () => {
                                 onFailure={errorKakao}
                                 useLoginForm={true}
                                 render={({ onClick }) => (
-                                    <button 
-                                        className="Button2" 
+                                    <button
+                                        className="Button2"
                                         onClick={onClick}
                                     >
                                         로그인
@@ -397,13 +405,6 @@ const Home = () => {
                     <ChatBot />
                 </div>
             )}
-            <DetailPage
-                selectedRegion={selectedRegion}
-                selectedDong={selectedDong}
-                selectedCategory={selectedCategory}  // 선택한 업종을 전달
-                data={[]} // 여기에 실제 데이터를 전달하거나 필요에 따라 수정
-            />
-
         </div>
     );
 };
