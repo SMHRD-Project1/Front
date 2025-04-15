@@ -20,7 +20,6 @@ function App() {
     localStorage.setItem('sessionId', randomId)
     return randomId;
   })
-
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && question.trim() !== '') {
       SendQuestion();
