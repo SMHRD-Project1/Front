@@ -34,7 +34,8 @@ body {
 
 /* 지도 위에 올라오는 UI 레이어 */
 .ui-overlay {
-    position: absolute;
+    position: fixed;
+    /* absolute에서 fixed로 변경 */
     top: 0;
     left: 0;
     z-index: 9999;
@@ -234,4 +235,119 @@ body {
 .category-button-wrapper {
     position: relative;  /* ✅ 기준점 */
     display: inline-block;
+}
+
+/* 새로운 레이아웃 스타일 */
+.content-container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+}
+
+.map-container {
+    flex: 1;
+    height: 100%;
+    position: relative;
+}
+
+.history-section {
+    width: 300px;
+    background-color: white;
+    border-left: 1px solid #e5e5e5;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.history-header {
+    padding: 20px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.history-header h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #202123;
+}
+
+.history-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.history-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #f7f7f8;
+}
+
+.history-icon {
+    margin-right: 12px;
+    font-size: 1.2rem;
+}
+
+.history-text {
+    flex: 1;
+}
+
+.history-category {
+    font-weight: 600;
+    color: #202123;
+}
+
+.history-region {
+    color: #353740;
+}
+
+.history-time {
+    display: block;
+    font-size: 0.8rem;
+    color: #6e6e80;
+    margin-top: 4px;
+}
+
+/* 스크롤바 스타일링 */
+.history-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.history-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.history-content::-webkit-scrollbar-thumb {
+    background: #c5c5d2;
+    border-radius: 4px;
+}
+
+.history-content::-webkit-scrollbar-thumb:hover {
+    background: #a5a5b5;
+}
+
+.real-estate-container {
+    background-color: #f8f9fa;
+    padding: 20px;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.real-estate-container h2 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.real-estate-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.login-buttons {
+    display: flex;
+    gap: 10px;  /* 업종과 지역 버튼 사이의 간격과 동일하게 설정 */
 }

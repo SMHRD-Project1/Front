@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import '../styles/Style.css';
 import MainPage from './MainPage';
+import RealEstate from '../components/RealEstate';
 import 업종분류 from '../config/업종분류.json'
 // import ChatbotWindow from "./ChatbotWindow";
 import ChatBot from "../ChatBot";
@@ -8,6 +9,7 @@ import { useNavigate } from 'react-router-dom';  // 라우터 네비게이션을
 import 업종코드목록 from '../config/업종코드목록.json';
 import KakaoLogin from 'react-kakao-login';
 import axios from 'axios';
+import DetailPage from "./DetailPage";
 
 
 
@@ -18,13 +20,17 @@ const Home = () => {
     const [hoveredSub, setHoveredSub] = useState(null);
     const [selectedRegion, setSelectedRegion] = useState("지역");
     const [showRegionMenu, setShowRegionMenu] = useState(false);
-    const [selectedDong, setSelectedDong] = useState(null);  // 동 설정에 대한 선택
+    const [selectedDong, setSelectedDong] = useState(null);
     const mainPageRef = useRef();
     const [isChatVisible, setIsChatVisible] = useState(false); // 챗봇 대화창 표시 상태
     const [isClosing, setIsClosing] = useState(false); // 챗봇 닫기 애니메이션 상태
     const navigate = useNavigate();  // 네비게이션 훅 추가
     const [text1, setText1] = useState("");  // 업종
     const [text2, setText2] = useState("");  // 지역(동)
+    const [polygonCoordinates, setPolygonCoordinates] = useState(null); // 다각형 좌표 저장
+    const [showRealEstate, setShowRealEstate] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [userInfo, setUserInfo] = useState(null);
 
     const dongList = [
         "광천동", "금호동", "농성동", "동천동", "상무1동", "상무2동",
@@ -67,11 +73,11 @@ const Home = () => {
     const [업종코드, set업종코드] = useState("");
     const get업종코드 = (이름) => {
         let match = 업종코드목록.find(item => item.업종이름 === 이름);
-        
+
         if (!match) {
             match = 업종코드목록.find(item => 이름.includes(item.업종이름) || item.업종이름.includes(이름));
         }
-        
+
         return match ? match.업종코드 : "";
     };
 
@@ -107,6 +113,68 @@ const Home = () => {
         }
     };
 
+    // 카카오 로그인 성공 시 호출되는 함수
+    const responseKakao = async (response) => {
+        try {
+            if (!response || !response.profile) {
+                console.error("로그인 응답이 유효하지 않습니다");
+                return;
+            }
+            
+            const kakaoId = response.profile.id;
+            const nickname = response.profile.properties.nickname;
+
+            // 서버에 로그인 요청
+            const serverResponse = await axios.post('http://localhost:8088/controller/login', {
+                id: kakaoId,
+                nickname: nickname
+            });
+
+            if (serverResponse.data) {
+                setIsLoggedIn(true);
+                setUserInfo({
+                    id: kakaoId,
+                    nickname: nickname
+                });
+                // 로컬 스토리지에 로그인 정보 저장
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('userInfo', JSON.stringify({ id: kakaoId, nickname: nickname }));
+            }
+        } catch (error) {
+            console.error('로그인 처리 중 오류가 발생했습니다:', error);
+        }
+    };
+
+    // 로그아웃 처리
+    const handleLogout = () => {
+        setIsLoggedIn(false);
+        setUserInfo(null);
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('userInfo');
+    };
+
+    // 컴포넌트 마운트 시 로그인 상태 확인
+    useEffect(() => {
+        const savedLoginState = localStorage.getItem('isLoggedIn');
+        const savedUserInfo = localStorage.getItem('userInfo');
+        
+        if (savedLoginState === 'true' && savedUserInfo) {
+            setIsLoggedIn(true);
+            setUserInfo(JSON.parse(savedUserInfo));
+        }
+    }, []);
+
+    const errorKakao = (error) => {
+        console.error('카카오 로그인 실패:', error);
+    };
+
+    // 다각형 좌표를 저장하는 함수
+    const handlePolygonSet = (coordinates) => {
+        console.log('다각형 좌표 저장:', coordinates);
+        setPolygonCoordinates(coordinates);
+    };
+
+    // 업종 선택 시 다각형이 설정되어 있다면 해당 구역 내의 새로운 업종 핀을 표시
     const handleCategorySelect = async (detail) => {
         setSelectedCategory(detail);
         const code = get업종코드(detail);
@@ -118,7 +186,16 @@ const Home = () => {
 
         setTimeout(() => {
             if (mainPageRef.current?.btn2Event) {
-                mainPageRef.current.btn2Event(detail, text2);
+                if (polygonCoordinates) {
+                    // 다각형이 설정되어 있는 경우
+                    mainPageRef.current.btn2Event(detail, "다각형 설정", polygonCoordinates);
+                } else if (selectedDong) {
+                    // 동이 선택되어 있는 경우
+                    mainPageRef.current.btn2Event(detail, selectedDong);
+                } else {
+                    // 아무것도 선택되어 있지 않은 경우
+                    mainPageRef.current.btn2Event(detail, text2);
+                }
             }
         }, 100);
     };
@@ -128,7 +205,12 @@ const Home = () => {
         setText2(option);
         setShowRegionMenu(false);
         setHoveredMain(null);
-        
+
+        if (option !== '동 설정' && option !== '다각형 설정') {
+            setSelectedDong(option);  // 선택된 동 저장
+            setPolygonCoordinates(null);  // 다각형 좌표 초기화
+        }
+
         setTimeout(() => {
             if (mainPageRef.current?.btn2Event) {
                 mainPageRef.current.btn2Event(text1, option);
@@ -136,34 +218,20 @@ const Home = () => {
         }, 100);
     };
 
-    // 카카오 로그인 성공 시 호출되는 함수
-    const responseKakao = (response) => {
-        if (!response || !response.profile) {
-            console.error("로그인 응답이 유효하지 않습니다");
-            return;
-        }
-        
-        const kakaoId = response.profile.id;
-        const nickname = response.profile.properties.nickname;
-
-        axios.post('http://localhost:8088/controller/login',
-            { id: kakaoId, nickname: nickname })
-            .then((res) => {
-                // 로그인 성공 처리
-            })
-            .catch((err) => {
-                console.error('로그인 처리 중 오류가 발생했습니다:', err);
-            });
-    };
-
-    const errorKakao = (error) => {
-        console.error('카카오 로그인 실패:', error);
+    // 마이페이지로 이동하는 함수
+    const handleMyPageClick = () => {
+        navigate('/mypage');
     };
 
     return (
         <div className="map-wrapper">
+            <MainPage
+                ref={mainPageRef}
+                업종코드={업종코드}
+                onPolygonSet={handlePolygonSet}
+            />
 
-            <MainPage ref={mainPageRef} 업종코드={업종코드} />
+            {showRealEstate && <RealEstate />}
 
             {/* 지도 위에 떠있는 버튼들 */}
             <div className="ui-overlay">
@@ -222,7 +290,7 @@ const Home = () => {
                                 className="Button1"
                                 onClick={() => {
                                     setShowRegionMenu(!showRegionMenu);
-                                    setShowCategoryMenu(false); // 다른 메뉴는 닫기
+                                    setShowCategoryMenu(false);
                                 }}
                             >
                                 {selectedRegion}
@@ -239,7 +307,6 @@ const Home = () => {
                                                 onClick={() => {
                                                     if (option === "다각형 설정" || option === "동 설정") {
                                                         handleRegionSelect(option);
-
                                                     }
                                                 }}
                                             >
@@ -254,7 +321,6 @@ const Home = () => {
                                                                 onClick={(e) => {
                                                                     e.stopPropagation();
                                                                     handleRegionSelect(dong);
-
                                                                 }}
                                                             >
                                                                 {dong}
@@ -268,23 +334,49 @@ const Home = () => {
                                 </div>
                             )}
                         </div>
+
+                        <div className="category-button-wrapper">
+                            <button
+                                className="Button1"
+                                onClick={() => setShowRealEstate(!showRealEstate)}
+                            >
+                                {showRealEstate ? '지도 보기' : '부동산'}
+                            </button>
+                        </div>
                     </div>
 
                     <div className="right-buttons">
-                        <KakaoLogin
-                            token={process.env.REACT_APP_KAKAO_JAVASCRIPT_KEY}
-                            onSuccess={responseKakao}
-                            onFailure={errorKakao}
-                            useLoginForm={true}
-                            render={({ onClick }) => (
+                        {isLoggedIn ? (
+                            <div className="login-buttons">
                                 <button 
                                     className="Button2" 
-                                    onClick={onClick}
+                                    onClick={handleMyPageClick}
                                 >
-                                    로그인
+                                    마이페이지
                                 </button>
-                            )}
-                        />
+                                <button 
+                                    className="Button2" 
+                                    onClick={handleLogout}
+                                >
+                                    로그아웃
+                                </button>
+                            </div>
+                        ) : (
+                            <KakaoLogin
+                                token={process.env.REACT_APP_KAKAO_JAVASCRIPT_KEY}
+                                onSuccess={responseKakao}
+                                onFailure={errorKakao}
+                                useLoginForm={true}
+                                render={({ onClick }) => (
+                                    <button 
+                                        className="Button2" 
+                                        onClick={onClick}
+                                    >
+                                        로그인
+                                    </button>
+                                )}
+                            />
+                        )}
                     </div>
                 </div>
 
@@ -297,7 +389,6 @@ const Home = () => {
                         />
                     </button>
                 </div>
-
             </div>
 
             {/* 챗봇 창을 조건부 렌더링으로 변경 */}
@@ -306,6 +397,13 @@ const Home = () => {
                     <ChatBot />
                 </div>
             )}
+            <DetailPage
+                selectedRegion={selectedRegion}
+                selectedDong={selectedDong}
+                selectedCategory={selectedCategory}  // 선택한 업종을 전달
+                data={[]} // 여기에 실제 데이터를 전달하거나 필요에 따라 수정
+            />
+
         </div>
     );
 };

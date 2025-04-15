@@ -73,20 +73,20 @@ const MainPage = forwardRef(({ 업종코드 }, ref) => {
 
     // 업종코드가 있는 경우 API 호출
     if (업종코드) {
-      
+
       const api = `https://apis.data.go.kr/B553077/api/open/sdsc2/storeListInPolygon?serviceKey=${process.env.REACT_APP_SANGGWON_API_KEY}&pageNo=1&numOfRows=1000&key=POLYGON%20((${coordinates}))&indsSclsCd=${업종코드}&type=json`;
 
 
       axios
         .get(api)
         .then((res) => {
-          
+
           if (res.data && res.data.body && res.data.body.items) {
-            
+
             // 기존 마커 제거
             markerRef.current.forEach((marker) => marker.setMap(null));
             markerRef.current = [];
-            
+
             // 새 마커 추가
             res.data.body.items.forEach((item) => {
               const position = new naver.maps.LatLng(item.lat, item.lon);
@@ -205,7 +205,7 @@ const MainPage = forwardRef(({ 업종코드 }, ref) => {
         .map((item) => `${item.x}%20${item.y}`)
         .join(',');
 
-      
+
       // 업종코드가 비어있는지 확인
       if (!업종코드) {
         return;
@@ -217,7 +217,7 @@ const MainPage = forwardRef(({ 업종코드 }, ref) => {
       axios
         .get(api)
         .then((res) => {
-          
+
           if (res.data && res.data.body && res.data.body.items) {
             setMarkerPosition(res.data);
             localStorage.setItem('markerPosition', JSON.stringify(res.data));
@@ -240,25 +240,25 @@ const MainPage = forwardRef(({ 업종코드 }, ref) => {
   useEffect(() => {
     if (markerPosition) {
       try {
-        
+
         if (!markerPosition.body || !markerPosition.body.items || !Array.isArray(markerPosition.body.items)) {
           return;
         }
-        
+
         // 기존 마커 제거
         markerRef.current.forEach((marker) => marker.setMap(null));
         markerRef.current = [];
-        
+
         // 새 마커 추가
         const pins = markerPosition.body.items.map((position) => {
           return new naver.maps.LatLng(position.lat, position.lon);
         });
-        
-        
+
+
         pins.forEach((pin) => {
           markerSet(pin);
         });
-        
+
       } catch (error) {
         console.error(" [MainPage] 마커 찍기 오류:", error);
       }
@@ -293,24 +293,23 @@ const MainPage = forwardRef(({ 업종코드 }, ref) => {
       setPolymap_(false);
       setMarkerList([]);
       dongPositionsRef.current = [];
-    } else {
+    }
+    else {
       btnFlagRef.current = false;
       setBtnFlag(false);  // 마커 찍기 비활성화
-      
-      if (text2 !== '동 설정') {
-        dong.forEach((item) => {
-          if (item.properties.adm_nm === text2) {
-            dongPositionsRef.current = item.geometry.coordinates[0];
-            clearAll();
-            drowPolygon(dongPositionsRef.current);
-            // 업종코드가 있는 경우 자동으로 polymap_ 상태를 true로 설정
-            if (업종코드) {
-              polymap.current = true;
-              setPolymap_(true);
-            }
+
+      dong.forEach((item) => {
+        if (item.properties.adm_nm === text2) {
+          dongPositionsRef.current = item.geometry.coordinates[0];
+          clearAll();
+          drowPolygon(dongPositionsRef.current);
+          // 업종코드가 있는 경우 자동으로 polymap_ 상태를 true로 설정
+          if (업종코드) {
+            polymap.current = true;
+            setPolymap_(true);
           }
-        });
-      }
+        }
+      });
     }
   };
 

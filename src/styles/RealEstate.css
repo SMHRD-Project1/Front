@@ -1,0 +1,22 @@
+.real-estate-container {
+    position: absolute;
+    top: 60px; /* 상단 버튼 아래에 위치하도록 */
+    left: 0;
+    width: 400px; /* 이미지에서 보이는 것처럼 좌측에 고정된 너비 */
+    height: calc(100vh - 60px); /* 전체 높이에서 상단 여백 제외 */
+    background-color: white;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.real-estate-content {
+    padding: 20px;
+}
+
+.real-estate-container h2 {
+    padding: 20px;
+    margin: 0;
+    border-bottom: 1px solid #e5e5e5;
+    background-color: #f8f9fa;
+} 
