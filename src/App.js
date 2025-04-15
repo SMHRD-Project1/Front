@@ -4,7 +4,7 @@ import SalesChartEchart from './chart/SalesChartEchart';
 import ExampleDonut from "./chart/ExampleDonut";
 import ChatBot from "./ChatBot"
 import Home from "./pages/home";
-import StackedLineChart from "./conponents/StackedLineChart";
+import StackedLineChart from "./components/StackedLineChart";
 
 
 function App() {
