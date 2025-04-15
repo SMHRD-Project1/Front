@@ -20,9 +20,6 @@ const MainPage = forwardRef(({ 업종코드 }, ref) => {
   const [btnFlag, setBtnFlag] = useState(false);
   const [markerList, setMarkerList] = useState([]);
 
-
-
-
   //  초기화
   const clearAll = () => {
     markerRef.current.forEach((marker) => marker.setMap(null));
@@ -309,7 +306,6 @@ const MainPage = forwardRef(({ 업종코드 }, ref) => {
             // 업종코드가 있는 경우 자동으로 polymap_ 상태를 true로 설정
             if (업종코드) {
               polymap.current = true;
-              
               setPolymap_(true);
             }
           }
@@ -320,7 +316,8 @@ const MainPage = forwardRef(({ 업종코드 }, ref) => {
 
   // 외부에서 접근 가능한 함수들 
   useImperativeHandle(ref, () => ({
-    btn2Event,
+    makerEvent,
+    btn2Event
   }));
 
   return (
