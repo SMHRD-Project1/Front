@@ -239,6 +239,7 @@ const Home = () => {
                                                 onClick={() => {
                                                     if (option === "다각형 설정" || option === "동 설정") {
                                                         handleRegionSelect(option);
+
                                                     }
                                                 }}
                                             >
@@ -253,6 +254,7 @@ const Home = () => {
                                                                 onClick={(e) => {
                                                                     e.stopPropagation();
                                                                     handleRegionSelect(dong);
+
                                                                 }}
                                                             >
                                                                 {dong}
@@ -295,6 +297,7 @@ const Home = () => {
                         />
                     </button>
                 </div>
+
             </div>
 
             {/* 챗봇 창을 조건부 렌더링으로 변경 */}
