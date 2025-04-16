@@ -4,7 +4,7 @@ import '../styles/main.css';
 import axios from 'axios';
 import React, { useImperativeHandle, forwardRef, useEffect, useRef, useState } from 'react';
 
-const MainPage = forwardRef(({ 업종코드 }, ref) => {
+const MainPage = forwardRef((props, ref) => {
   let result = '';
   const polygonRef = useRef(null);
   const polylineRef = useRef(null);
@@ -19,6 +19,10 @@ const MainPage = forwardRef(({ 업종코드 }, ref) => {
   const [polymap_, setPolymap_] = useState(false);
   const [btnFlag, setBtnFlag] = useState(false);
   const [markerList, setMarkerList] = useState([]);
+
+
+  
+
 
   //  초기화
   const clearAll = () => {
@@ -58,46 +62,6 @@ const MainPage = forwardRef(({ 업종코드 }, ref) => {
       strokeOpacity: 0.6,
       strokeWeight: 3,
     });
-
-    // 폴리곤이 그려진 후 API 호출을 위한 좌표 설정
-    const coordinates = path.map(coord => {
-      if (coord.x && coord.y) {
-        return `${coord.x}%20${coord.y}`;
-      } else if (coord.lat && coord.lng) {
-        return `${coord.lng}%20${coord.lat}`;
-      } else {
-        return `${coord[0]}%20${coord[1]}`;
-      }
-    }).join(',');
-
-
-    // 업종코드가 있는 경우 API 호출
-    if (업종코드) {
-
-      const api = `https://apis.data.go.kr/B553077/api/open/sdsc2/storeListInPolygon?serviceKey=${process.env.REACT_APP_SANGGWON_API_KEY}&pageNo=1&numOfRows=1000&key=POLYGON%20((${coordinates}))&indsSclsCd=${업종코드}&type=json`;
-
-
-      axios
-        .get(api)
-        .then((res) => {
-
-          if (res.data && res.data.body && res.data.body.items) {
-
-            // 기존 마커 제거
-            markerRef.current.forEach((marker) => marker.setMap(null));
-            markerRef.current = [];
-
-            // 새 마커 추가
-            res.data.body.items.forEach((item) => {
-              const position = new naver.maps.LatLng(item.lat, item.lon);
-              markerSet(position);
-            });
-          }
-        })
-        .catch((err) => {
-          console.error("❌ [MainPage] API 호출 오류:", err);
-        });
-    }
   };
 
   //  지도 로딩
@@ -182,12 +146,6 @@ const MainPage = forwardRef(({ 업종코드 }, ref) => {
           polylineRef.current.setMap(null);
           polylineRef.current = null;
         }
-
-        // 업종코드가 있는 경우 자동으로 API 호출
-        if (업종코드) {
-          polymap.current = true;
-          setPolymap_(true);
-        }
       });
     }
 
@@ -206,24 +164,15 @@ const MainPage = forwardRef(({ 업종코드 }, ref) => {
         .map((item) => `${item.x}%20${item.y}`)
         .join(',');
 
-
-      // 업종코드가 비어있는지 확인
-      if (!업종코드) {
-        return;
-      }
-
-      const api = `https://apis.data.go.kr/B553077/api/open/sdsc2/storeListInPolygon?serviceKey=${process.env.REACT_APP_SANGGWON_API_KEY}&pageNo=1&numOfRows=1000&key=POLYGON%20((${result}))&indsSclsCd=${업종코드}&type=json`;
-
+      const api = `https://apis.data.go.kr/B553077/api/open/sdsc2/storeListInPolygon?serviceKey=${process.env.REACT_APP_SANGGWON_API_KEY}&pageNo=1&numOfRows=1000&key=POLYGON%20((${result}))&indsLclsCd=I2&indsMclsCd=I212&indsSclsCd=I21201&type=json`;
 
       axios
         .get(api)
         .then((res) => {
+          setMarkerPosition(res.data);
 
-          if (res.data && res.data.body && res.data.body.items) {
-            setMarkerPosition(res.data);
-            localStorage.setItem('markerPosition', JSON.stringify(res.data));
-          } else {
-          }
+          // API 데이터 저장 (로컬스토리지)
+          localStorage.setItem('markerPosition', JSON.stringify(res.data));
 
           markerRef.current.forEach((marker) => marker.setMap(null));
           markerRef.current = [];
@@ -232,7 +181,6 @@ const MainPage = forwardRef(({ 업종코드 }, ref) => {
         })
         .catch((err) => {
           console.error('Error : ', err);
-          console.error('Error response:', err.response);
         });
     }
   }, [polymap_]);
@@ -240,29 +188,13 @@ const MainPage = forwardRef(({ 업종코드 }, ref) => {
   // 상권 Pin찍기
   useEffect(() => {
     if (markerPosition) {
-      try {
+      const pins = markerPosition.body.items.map(
+        (position) => new naver.maps.LatLng(position.lat, position.lon)
+      );
 
-        if (!markerPosition.body || !markerPosition.body.items || !Array.isArray(markerPosition.body.items)) {
-          return;
-        }
-
-        // 기존 마커 제거
-        markerRef.current.forEach((marker) => marker.setMap(null));
-        markerRef.current = [];
-
-        // 새 마커 추가
-        const pins = markerPosition.body.items.map((position) => {
-          return new naver.maps.LatLng(position.lat, position.lon);
-        });
-
-
-        pins.forEach((pin) => {
-          markerSet(pin);
-        });
-
-      } catch (error) {
-        console.error(" [MainPage] 마커 찍기 오류:", error);
-      }
+      pins.forEach((pin) => {
+        markerSet(pin);
+      });
     }
   }, [markerPosition]);
 
@@ -285,39 +217,28 @@ const MainPage = forwardRef(({ 업종코드 }, ref) => {
 
   const btn2Event = (text1, text2) => {
     clearAll();
-
+    console.log(text1, text2);
     if (text2 === '다각형 설정') {
       btnFlagRef.current = true;
-      setBtnFlag(true);  // 마커 찍기 활성화
-      // 기존 상태 초기화
-      polymap.current = false;
-      setPolymap_(false);
-      setMarkerList([]);
-      dongPositionsRef.current = [];
-    }
-    else {
+    } else {
       btnFlagRef.current = false;
-      setBtnFlag(false);  // 마커 찍기 비활성화
+      if (text2 != '동 설정') {
+        dong.forEach((item) => {
+          if (item.properties.adm_nm === text2) {
+            dongPositionsRef.current = item.geometry.coordinates[0];
+            clearAll();
+            drowPolygon(dongPositionsRef.current);
+            
 
-      dong.forEach((item) => {
-        if (item.properties.adm_nm === text2) {
-          dongPositionsRef.current = item.geometry.coordinates[0];
-          clearAll();
-          drowPolygon(dongPositionsRef.current);
-          // 업종코드가 있는 경우 자동으로 polymap_ 상태를 true로 설정
-          if (업종코드) {
-            polymap.current = true;
-            setPolymap_(true);
           }
-        }
-      });
+        });
+      }
     }
   };
 
-  // 외부에서 접근 가능한 함수들 
+  // ✅ 외부에서 접근 가능한 함수들 정의
   useImperativeHandle(ref, () => ({
-    makerEvent,
-    btn2Event
+    btn2Event,
   }));
 
   return (
