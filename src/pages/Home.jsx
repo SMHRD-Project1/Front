@@ -204,32 +204,27 @@ const Home = () => {
                 selectedCategory={selectedCategory}
             />
             <LocationProvider>
-                <div>
-                    {/* 부동산 정보 토글 버튼 */}
-                    <button
-                        className={`real-estate-toggle ${showRealEstate ? 'active' : ''}`}
-                        onClick={() => setShowRealEstate(!showRealEstate)}
-                    >
-                        부동산정보
-                    </button>
+                {/* 부동산 정보 토글 버튼 */}
+                <button
+                    className={`real-estate-toggle ${showRealEstate ? 'active' : ''}`}
+                    onClick={() => setShowRealEstate(!showRealEstate)}
+                >
+                    부동산정보
+                </button>
 
-                    {/* RealEstate 컴포넌트 열기/닫기 */}
-                    {showRealEstate && (
-                        <RealEstate
-                            isOpen={showRealEstate}
-                            onClose={() => setShowRealEstate(false)} // 닫기 버튼 클릭 시 상태 false로 설정
-                        />
-                    )}
+                <RealEstate
+                    isOpen={showRealEstate}
+                    onClose={() => setShowRealEstate(!showRealEstate)} // 닫기 버튼 클릭 시 상태 false로 설정
+                />
 
-                    <MapPage
-                        ref={mainPageRef}
-                        selectedCategory={selectedCategory}
-                        selectedRegion={selectedRegion}
-                        selectedDong={selectedDong}
-                        업종코드={업종코드}
-                        onPolygonSet={handlePolygonSet}
-                    />
-                </div>
+                <MapPage
+                    ref={mainPageRef}
+                    selectedCategory={selectedCategory}
+                    selectedRegion={selectedRegion}
+                    selectedDong={selectedDong}
+                    업종코드={업종코드}
+                    onPolygonSet={handlePolygonSet}
+                />
             </LocationProvider>
 
             {/* 지도 위에 떠있는 버튼들 */}

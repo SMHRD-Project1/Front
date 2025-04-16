@@ -22,7 +22,6 @@ const isPointInsidePolygon = (point, polygon) => {
 };
 
 const RealEstate = ({ isOpen }) => {
-    const [detailPageWidth, setDetailPageWidth] = useState(400);
     const [filteredData, setFilteredData] = useState([]);
 
     const { polygonCoords } = useLocation(); // ✅ context에서 path 받아오기
@@ -30,27 +29,6 @@ const RealEstate = ({ isOpen }) => {
     useEffect(() => {
         console.log('useLocation 데이터:', { polygonCoords });
     }, [polygonCoords]);
-
-    useEffect(() => {
-        const observer = new ResizeObserver(entries => {
-            for (let entry of entries) {
-                if (entry.target.classList.contains('detail-page')) {
-                    setDetailPageWidth(entry.target.offsetWidth);
-                }
-            }
-        });
-
-        const timeoutId = setTimeout(() => {
-            const detailPage = document.querySelector('.detail-page');
-            if (detailPage) observer.observe(detailPage);
-        }, 0);
-
-        return () => {
-            clearTimeout(timeoutId);
-            const detailPage = document.querySelector('.detail-page');
-            if (detailPage) observer.unobserve(detailPage);
-        };
-    }, []);
 
     useEffect(() => {
         console.log('필터링 결과:', filteredData);
@@ -76,11 +54,10 @@ const RealEstate = ({ isOpen }) => {
         setFilteredData(result);
     }, [polygonCoords]);
 
-
     return (
         <div
             className={`real-estate ${isOpen ? 'open' : ''}`}
-            style={{ '--detail-page-width': `${detailPageWidth}px` }}
+            style={{ '--detail-page-width': `400px` }}
         >
             <div className="real-estate-header">
                 <h2>매매 정보</h2>
