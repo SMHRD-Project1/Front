@@ -57,7 +57,7 @@ const RealEstate = ({ isOpen }) => {
     return (
         <div
             className={`real-estate ${isOpen ? 'open' : ''}`}
-            // style={{ '--detail-page-width': `${detailPageWidth}px` }}
+            style={{ '--detail-page-width': `400px` }}
         >
             <div className="real-estate-header">
                 <h2>매매 정보</h2>

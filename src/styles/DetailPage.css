@@ -150,12 +150,9 @@ h2 {
 }
 
 .data-list {
-    width: 300px;
-    height: 200px;
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
+    background-color: #f9f9f9;
+    padding: 20px;
     border-radius: 8px;
-    margin-bottom: 20px;
 }
 
 .data-list ul {
@@ -172,54 +169,6 @@ h2 {
     border-bottom: none;
 }
 
-/* 반응형 스타일 */
-@media (max-width: 768px) {
-    .detail-page {
-        width: 300px;
-    }
-
-    .close-button.opened {
-        right: calc(100% - 300px);
-    }
-
-    .chart {
-        height: 200px;
-    }
-
-    .data-list {
-    }
-
-    .data-list li {
-    }
-}
-
-@media (max-width: 480px) {
-    .detail-page {
-        width: 250px;
-    }
-
-    .close-button.opened {
-        right: calc(100% - 250px);
-    }
-
-    .chart {
-        height: 150px;
-    }
-
-    .data-list {
-    }
-
-    .data-list li {
-        font-size: 14px;
-    }
-}
-
-/* DetailPage가 650px 이상일 때 2열로 표시 (그래프 너비 300px + 간격 20px + 여백) */
-@media (min-width: 650px) {
-    .graph {
-        margin-bottom: 0;
-    }
-}
 
 /* 상세 정보 영역의 최소 너비 설정 */
 .detail-page {
@@ -458,6 +407,7 @@ h2 {
 
 .data-list {
     background-color: #f9f9f9;
+    padding: 15px;
     border-radius: 8px;
 }
 
