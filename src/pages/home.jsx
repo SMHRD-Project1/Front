@@ -1,12 +1,14 @@
-import React, { useState, useRef } from "react";
-import axios from 'axios';
+import React, { useState, useRef, useEffect } from "react";
 import '../styles/Style.css';
 import MainPage from './MainPage';
 import RealEstate from './RealEstate';
 import 업종분류 from '../config/업종분류.json'
 import ChatBot from "../ChatBot";
 import { useNavigate } from 'react-router-dom';  // 라우터 네비게이션을 위해 추가
-
+import 업종코드목록 from '../config/업종코드목록.json';
+import KakaoLogin from 'react-kakao-login';
+import axios from 'axios';
+import DetailPage from "./DetailPage";
 
 const Home = () => {
     const [selectedCategory, setSelectedCategory] = useState("업종");
@@ -15,23 +17,35 @@ const Home = () => {
     const [hoveredSub, setHoveredSub] = useState(null);
     const [selectedRegion, setSelectedRegion] = useState("지역");
     const [showRegionMenu, setShowRegionMenu] = useState(false);
-    const [selectedDong, setSelectedDong] = useState(null);  // 동 설정에 대한 선택
+    const [selectedDong, setSelectedDong] = useState(''); // 부동산 정보 넘기기 - 0416남규
+    const [selectedProperty, setSelectedProperty] = useState(null); // 부동산 정보 넘기기 - 0416남규
     const mainPageRef = useRef();
     const [isChatVisible, setIsChatVisible] = useState(false); // 챗봇 대화창 표시 상태
+    const [isClosing, setIsClosing] = useState(false); // 챗봇 닫기 애니메이션 상태
+    const navigate = useNavigate();  // 네비게이션 훅 추가
+    const [text1, setText1] = useState("");  // 업종
+    const [text2, setText2] = useState("");  // 지역(동)
+    const [polygonCoordinates, setPolygonCoordinates] = useState(null); // 다각형 좌표 저장
+    const [showRealEstate, setShowRealEstate] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [userInfo, setUserInfo] = useState(null);
 
     const dongList = [
         "광천동", "금호동", "농성동", "동천동", "상무1동", "상무2동",
         "서창동", "양동", "유덕동", "치평동", "풍암동", "화정동"
     ];
 
-    // 동과 업종 정보를 챗봇에 전달하는 함수
+
+    // btn2Event의 로직을 Home 컴포넌트로 가져옴
     const handleRegionAndCategory = () => {
         if (mainPageRef.current?.btn2Event) {
-            const text = `${selectedDong || ''} ${selectedCategory || ''}`.trim();
-            if (text) {
-                mainPageRef.current.btn2Event(text);  // 챗봇에 텍스트 전달
-            }
+            mainPageRef.current.btn2Event(text1, text2);
         }
+    };
+
+    // 로그인 페이지로 이동하는 함수
+    const handleLoginClick = () => {
+        navigate('/login');  // /login 경로로 이동
     };
 
     React.useEffect(() => {
@@ -187,7 +201,10 @@ const Home = () => {
         }, 100);
     };
 
-    const navigate = useNavigate();
+    // 마이페이지로 이동하는 함수
+    const handleMyPageClick = () => {
+        navigate('/mypage');
+    };
 
     return (
         <div className="home-container">
@@ -272,7 +289,7 @@ const Home = () => {
                                 className="Button1"
                                 onClick={() => {
                                     setShowRegionMenu(!showRegionMenu);
-                                    setShowCategoryMenu(false); // 다른 메뉴는 닫기
+                                    setShowCategoryMenu(false);
                                 }}
                             >
                                 {selectedRegion}
@@ -287,19 +304,13 @@ const Home = () => {
                                                 className="category-item"
                                                 onMouseEnter={() => setHoveredMain(option)}
                                                 onClick={() => {
-                                                    if (option === "다각형 설정") {
-                                                        setSelectedRegion(`다각형 설정${selectedDong ? ` (${selectedDong})` : ''}`);
-                                                        handleRegionAndCategory(); // 다각형 설정 시
-                                                        setShowRegionMenu(false);
-                                                        setHoveredMain(null);
-                                                    } else if (option === "동 설정") {
-                                                        setHoveredMain("동 설정");
+                                                    if (option === "다각형 설정" || option === "동 설정") {
+                                                        handleRegionSelect(option);
                                                     }
                                                 }}
                                             >
                                                 {option}
 
-                                                {/* ✅ 동 설정 시 중분류 (동 목록) 옆으로 표시 */}
                                                 {hoveredMain === "동 설정" && option === "동 설정" && (
                                                     <div className="subcategory-menu">
                                                         {dongList.map((dong) => (
@@ -308,12 +319,7 @@ const Home = () => {
                                                                 className="subcategory-item"
                                                                 onClick={(e) => {
                                                                     e.stopPropagation();
-                                                                    setSelectedRegion(dong);
-                                                                    setSelectedDong(dong);
-                                                                    setShowRegionMenu(false);
-                                                                    setHoveredMain(null);
-
-                                                                    handleRegionAndCategory();  // 챗봇으로 동과 업종 정보를 전달
+                                                                    handleRegionSelect(dong);
                                                                 }}
                                                             >
                                                                 {dong}
@@ -376,8 +382,8 @@ const Home = () => {
             </div>
 
             {/* 챗봇 창을 조건부 렌더링으로 변경 */}
-            {isChatVisible && (
-                <div className="chat-container">
+            {(isChatVisible || isClosing) && (
+                <div className={`chat-container ${isClosing ? 'hide' : 'show'}`}>
                     <ChatBot />
                 </div>
             )}
@@ -385,4 +391,5 @@ const Home = () => {
     );
 };
 
-export default Home;
+
+export default Home

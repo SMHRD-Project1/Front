@@ -1,8 +1,5 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import SalesChartEchart from './chart/SalesChartEchart';
-import ExampleDonut from "./chart/ExampleDonut";
-import ChatBot from "./ChatBot"
 import Home from "./pages/home";
 import StackedLineChart from "./components/StackedLineChart";
 import MyPage from "./pages/MyPage";

@@ -1,6 +1,20 @@
+import axios from 'axios'
 import React, { useState, useRef, useEffect } from 'react';
-import '../styles/DetailPage.css'; // 스타일을 외부 CSS 파일로 관리
+import '../styles/DetailPage.css';
 import ChartComponent from '../components/ChartComponent';
+import LineCom1 from '../components/LineCom1';
+import LineCom2 from '../components/LineCom2';
+import LineCom3 from '../components/LineCom3';
+import LineCom4 from '../components/LineCom4';
+import LineCom5 from '../components/LineCom5';
+import LineCom6 from '../components/LineCom6';
+import LineCom8 from '../components/LineCom8';
+
+import DonutCom1 from '../components/DonutCom1';
+
+import BarCom1 from '../components/BarCom1';
+import BarCom2 from '../components/BarCom2';
+import BarCom3 from '../components/BarCom3';
 
 const DetailPage = ({ selectedRegion, selectedDong, selectedCategory, data }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -106,28 +120,29 @@ const DetailPage = ({ selectedRegion, selectedDong, selectedCategory, data }) =>
           <div className="graphs-container">
             <h4>매출 분석</h4>
             <div className="graph-group">
-              <div className='graph'>월 매출 추이 글씨로 띄워두기</div>
-              <div className='graph'>인접동 평균매출 여러선 평균매출</div>
+              <div className='graph'><LineCom1 dong={selectedRegion} cate={selectedCategory} /></div>
+              <div className='graph'><LineCom2 dong={selectedRegion} cate={selectedCategory} /></div>
               <div className='graph'>유사 업종 매출 추이 여러선 평균매출</div>
-              <div className='graph'>유사 업종 수 막대그래프</div>
+              <div className='graph'>유사 업종 수 //막대그래프</div>
+
             </div>
 
             <h4>배달 분석</h4>
             <div className="graph-group">
-              <div className='graph'>월별 배달 매출 추이 차트</div>
-              <div className='graph'>인접 동 배달 매출 여러선 차트 그래프</div>
-              <div className='graph'>남/녀 배달 비율 도넛</div>
-              <div className='graph'>매장/배달 비율 도넛</div>
+              <div className='graph'><LineCom3 dong={selectedRegion} cate={selectedCategory} /></div>
+              <div className='graph'><LineCom4 dong={selectedRegion} cate={selectedCategory} /></div>
+              <div className='graph'><DonutCom1 dong={selectedRegion} cate={selectedCategory} /></div>
+              <div className='graph'><LineCom5 dong={selectedRegion} cate={selectedCategory} /></div>
             </div>
 
             <h4>유동인구</h4>
             <div className="graph-group">
-              <div className='graph'>시간대별 유동 인구 변화 차트</div>
-              <div className='graph'>연령대별 유동 인구 차트</div>
-              <div className='graph'>요일별 유동 인구 차트</div>
-              <div className='graph'>성별 유동 인구 차트</div>
-              <div className='graph'>성별 거주 인구 차트</div>
-              <div className='graph'>인접 동 거주 인구 차트</div>
+              <div className='graph'><LineCom6 dong={selectedRegion} cate={selectedCategory} /></div>
+              <div className='graph'><BarCom1 dong={selectedRegion} cate={selectedCategory} /></div>
+              <div className='graph'><BarCom2 dong={selectedRegion} cate={selectedCategory} /></div>
+              <div className='graph'>성별 유동 인구 //다차원 차트</div>
+              <div className='graph'><BarCom3 dong={selectedRegion} cate={selectedCategory} /></div>
+              <div className='graph'><LineCom8 dong={selectedRegion} cate={selectedCategory} /></div>
             </div>
           </div>
         </div>
