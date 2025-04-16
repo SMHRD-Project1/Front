@@ -58,7 +58,7 @@ const DetailPage = ({ selectedRegion, selectedDong, selectedCategory, data }) =>
       document.removeEventListener('mouseup', handleMouseUp);
     };
   }, []);
-  
+
   return (
     <>
       <button
@@ -87,32 +87,17 @@ const DetailPage = ({ selectedRegion, selectedDong, selectedCategory, data }) =>
 
           {selectedRegion && selectedDong ? (
             <>
-              <h3>{selectedDong} 지역</h3>
-              {selectedCategory && <p>{selectedCategory}</p>}
-              {/* {selectedCategory && <p><strong>선택한 업종: </strong>{selectedCategory}</p>} */}
-
+              <h3>{selectedDong}</h3>
+              {/* {selectedCategory && <p>{selectedCategory}</p>} */}
               {/* 상권 분석 정보 (그래프가 들어갈 공간) */}
               <div className="chart-container">
-                <div id="chart" className="chart">
-                  <ChartComponent dong={selectedRegion} cate={selectedCategory} />
-                </div>
+                <ChartComponent dong={selectedRegion} cate={selectedCategory} />
               </div>
 
               {/* 지역 관련 데이터 */}
+              <h4>상권 분석</h4>
               <div className="data-list">
-                <h4>상권 분석</h4>
                 <DonutCom2 dong={selectedRegion} selectedCategory={selectedCategory} />
-                <ul>
-                  {data ? (
-                    data.map((item, index) => (
-                      <li key={index}>
-                        <strong>{item.name}</strong> - {item.description}
-                      </li>
-                    ))
-                  ) : (
-                    <p>데이터가 없습니다.</p>
-                  )}
-                </ul>
               </div>
             </>
           ) : (
@@ -123,28 +108,28 @@ const DetailPage = ({ selectedRegion, selectedDong, selectedCategory, data }) =>
           <div className="graphs-container">
             <h4>매출 분석</h4>
             <div className="graph-group">
-              <div className='graph' style={{ width: '300px', height: '200px' }}><LineCom1 dong={selectedRegion} cate={selectedCategory} /></div>
-              <div className='graph' style={{ width: '300px', height: '200px' }}><LineCom2 dong={selectedRegion} cate={selectedCategory} /></div>
+              <div style={{ width: '300px', height: '200px' }}><LineCom1 dong={selectedRegion} cate={selectedCategory} /></div>
+              <div style={{ width: '300px', height: '200px' }}><LineCom2 dong={selectedRegion} cate={selectedCategory} /></div>
               {/* <div className='graph'>유사 업종 매출 추이 여러선 평균매출</div>
               <div className='graph'>유사 업종 수 //막대그래프</div> */}
             </div>
 
             <h4>배달 분석</h4>
             <div className="graph-group">
-              <div className='graph' style={{ width: '300px', height: '200px' }}><LineCom3 dong={selectedRegion} cate={selectedCategory} /></div>
-              <div className='graph' style={{ width: '300px', height: '200px' }}><LineCom4 dong={selectedRegion} cate={selectedCategory} /></div>
-              <div className='graph' style={{ width: '300px', height: '200px' }}><DonutCom1 dong={selectedRegion} cate={selectedCategory} /></div>
-              <div className='graph' style={{ width: '300px', height: '200px' }}><LineCom5 dong={selectedRegion} cate={selectedCategory} /></div>
+              <div style={{ width: '300px', height: '200px' }}><LineCom3 dong={selectedRegion} cate={selectedCategory} /></div>
+              <div style={{ width: '300px', height: '200px' }}><LineCom4 dong={selectedRegion} cate={selectedCategory} /></div>
+              <div style={{ width: '300px', height: '200px' }}><DonutCom1 dong={selectedRegion} cate={selectedCategory} /></div>
+              <div style={{ width: '300px', height: '200px' }}><LineCom5 dong={selectedRegion} cate={selectedCategory} /></div>
             </div>
 
             <h4>유동인구</h4>
             <div className="graph-group">
-              <div className='graph' style={{ width: '300px', height: '200px' }}><LineCom6 dong={selectedRegion} cate={selectedCategory} /></div>
-              <div className='graph' style={{ width: '300px', height: '200px' }}><BarCom1 dong={selectedRegion} cate={selectedCategory} /></div>
-              <div className='graph' style={{ width: '300px', height: '200px' }}><BarCom2 dong={selectedRegion} cate={selectedCategory} /></div>
+              <div style={{ width: '300px', height: '200px' }}><LineCom6 dong={selectedRegion} cate={selectedCategory} /></div>
+              <div style={{ width: '300px', height: '200px' }}><BarCom1 dong={selectedRegion} cate={selectedCategory} /></div>
+              <div style={{ width: '300px', height: '200px' }}><BarCom2 dong={selectedRegion} cate={selectedCategory} /></div>
               {/* <div className='graph' style={{ width: '300px', height: '200px' }}>성별 유동 인구 //다차원 차트</div> */}
-              <div className='graph' style={{ width: '300px', height: '200px' }}><BarCom3 dong={selectedRegion} cate={selectedCategory} /></div>
-              <div className='graph2' ><LineCom8 dong={selectedRegion} cate={selectedCategory} /></div>
+              <div style={{ width: '300px', height: '200px' }}><BarCom3 dong={selectedRegion} cate={selectedCategory} /></div>
+              <div><LineCom8 dong={selectedRegion} cate={selectedCategory} /></div>
             </div>
           </div>
         </div>
