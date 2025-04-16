@@ -23,22 +23,45 @@ const ChartComponent = ({ dong, cate }) => {
     // 평균 매출 계산
     const totalSales = 매장Data.reduce((acc, curr) => acc + curr, 0);
     const avgSales = totalSales / 매장Data.length;
-    setAverageSales(avgSales.toFixed(2));
+    setAverageSales(Math.floor(avgSales));
 
     // ECharts 옵션 (막대 그래프)
     const option = {
-      title: { text: `${dong} - ${cate} 매장 매출` },
+      title: { 
+        text: `${dong} - ${cate} 매장`,
+        subtext: `평균매출: ${averageSales} 만원`,
+        left: 'center',
+        top: '5%',
+        subtextStyle: {
+          fontSize: 17,
+          color: '#666'
+        }
+      },
       tooltip: { trigger: 'axis' },
+      grid: {
+        left: '3%',
+        right: '5%',
+        top: '35%',
+        bottom: '10%',
+        containLabel: true
+      },
       xAxis: { type: 'category', data: months },
-      yAxis: { type: 'value' },
+      yAxis: { 
+        type: 'value',
+        scale: true,
+        axisLabel: {
+          formatter: '{value} 만원',
+          fontWeight: 'bold'
+        }
+      },
       series: [
         {
           name: '매장',
-          type: 'bar', // ✅ 바 타입으로 변경
+          type: 'bar',
           data: 매장Data,
           itemStyle: {
             color: '#73C0DE',
-            borderRadius: [4, 4, 0, 0] // 위쪽 모서리 둥글게
+            borderRadius: [4, 4, 0, 0]
           }
         }
       ]
@@ -50,10 +73,7 @@ const ChartComponent = ({ dong, cate }) => {
 
   return (
     <div>
-      <div ref={chartRef} style={{ width: '100%', height: '300px', backgroundColor: '#f9f9f9', borderRadius: '8px' }} />
-      <div style={{ marginTop: '10px', fontSize: '16px', fontWeight: 'bold' }}>
-        <p>{dong} - {cate} 매장의 평균 매출: {averageSales} 원</p>
-      </div>
+      <div ref={chartRef} style={{ width: '300px', height: '200px', backgroundColor: '#f9f9f9', borderRadius: '8px' }} />
     </div>
   );
 };

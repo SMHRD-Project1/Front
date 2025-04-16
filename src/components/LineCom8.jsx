@@ -17,6 +17,16 @@ const 동연결 = {
   동천동: ['광천동', '유덕동']
 };
 
+// 숫자 포맷팅 함수
+const formatNumber = (value) => {
+  if (value >= 10000) {
+    return (value / 10000).toFixed(1) + '만';
+  } else if (value >= 1000) {
+    return (value / 1000).toFixed(1) + 'k';
+  }
+  return value;
+};
+
 const GenderPopulationChart = ({ dong }) => {
   const chartRef = useRef(null);
 
@@ -27,52 +37,130 @@ const GenderPopulationChart = ({ dong }) => {
     const relatedDongs = [dong, ...(동연결[dong] || [])];
 
     // 각 동별로 성별 거주 인구 데이터 가져오기
-    const series = relatedDongs.map(d => {
-      // 해당 동의 데이터를 찾기
-      const target = 가구.filter(item => item.동명 === d);
+    const maleData = relatedDongs.map(d => {
+      const target = 가구.find(item => item.동명 === d);
+      return target ? target.남 || 0 : 0;
+    });
 
-      const 남Data = target.length > 0 ? [target[0].남] : [0];
-      const 여Data = target.length > 0 ? [target[0].여] : [0];
-      const 총Data = target.length > 0 ? [target[0].계] : [0];
-
-      return [
-        {
-          name: `${d} - 남`,
-          type: 'bar',
-          data: 남Data,
-          color: '#5470c6'
-        },
-        {
-          name: `${d} - 여`,
-          type: 'bar',
-          data: 여Data,
-          color: '#ee6666'
-        },
-        {
-          name: `${d} - 전체`,
-          type: 'bar',
-          data: 총Data,
-          color: '#91cc75'
-        }
-      ];
-    }).flat();
+    const femaleData = relatedDongs.map(d => {
+      const target = 가구.find(item => item.동명 === d);
+      return target ? target.여 || 0 : 0;
+    });
 
     const option = {
-      title: { text: `성별 거주 인구 (${dong} 포함)` },
+      title: { 
+        text: `성별 거주 인구 (${dong} 포함)`,
+        left: 'center',
+        top: '5%',
+        textStyle: {
+          fontSize: 18,
+          fontWeight: 'bold'
+        }
+      },
       tooltip: {
-        trigger: 'axis'
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow'
+        },
+        formatter: function(params) {
+          const index = params[0].dataIndex;
+          const total = maleData[index] + femaleData[index];
+          const malePercent = ((maleData[index] / total) * 100).toFixed(1);
+          const femalePercent = ((femaleData[index] / total) * 100).toFixed(1);
+          return `${relatedDongs[index]}<br/>
+                  남성: ${formatNumber(maleData[index])}명 (${malePercent}%)<br/>
+                  여성: ${formatNumber(femaleData[index])}명 (${femalePercent}%)<br/>
+                  전체: ${formatNumber(total)}명`;
+        }
       },
       legend: {
-        data: relatedDongs.map(d => `${d} - 남`).concat(relatedDongs.map(d => `${d} - 여`)).concat(relatedDongs.map(d => `${d} - 전체`))
+        data: ['남성', '여성'],
+        top: '15%',
+        left: 'center',
+        textStyle: {
+          fontSize: 10
+        },
+        itemWidth: 10,
+        itemHeight: 10
+      },
+      grid: {
+        left: '3%',
+        right: '5%',
+        top: '25%',
+        bottom: '5%',
+        containLabel: true
       },
       xAxis: {
         type: 'category',
-        data: ['성별']
+        data: relatedDongs,
+        axisLabel: {
+          interval: 0,
+          rotate: 30,
+          fontSize: 10
+        }
       },
       yAxis: {
-        type: 'value'
+        type: 'value',
+        name: '인구수',
+        scale: true,
+        nameTextStyle: {
+          fontWeight: 'bold'
+        },
+        axisLabel: {
+          formatter: function(value) {
+            return formatNumber(value) + '명';
+          },
+          fontWeight: 'bold'
+        }
       },
-      series
+      series: [
+        {
+          name: '남성',
+          type: 'bar',
+          stack: 'total',
+          emphasis: {
+            focus: 'series'
+          },
+          data: maleData,
+          label: {
+            show: true,
+            position: 'inside',
+            formatter: function(params) {
+              const total = maleData[params.dataIndex] + femaleData[params.dataIndex];
+              const percent = ((params.value / total) * 100).toFixed(1);
+              return `${percent}%`;
+            },
+            fontSize: 10,
+            color: '#fff'
+          },
+          itemStyle: {
+            color: '#5470c6'
+          }
+        },
+        {
+          name: '여성',
+          type: 'bar',
+          stack: 'total',
+          emphasis: {
+            focus: 'series'
+          },
+          data: femaleData,
+          label: {
+            show: true,
+            position: 'inside',
+            formatter: function(params) {
+              const total = maleData[params.dataIndex] + femaleData[params.dataIndex];
+              const percent = ((params.value / total) * 100).toFixed(1);
+              return `${percent}%`;
+            },
+            fontSize: 10,
+            color: '#fff'
+          },
+          itemStyle: {
+            color: '#ee6666'
+          }
+        }
+      ]
     };
 
     chart.setOption(option);
@@ -83,7 +171,7 @@ const GenderPopulationChart = ({ dong }) => {
   return (
     <div
       ref={chartRef}
-      style={{ width: '100%', height: '300px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}
+      style={{ width: '300px', height: '400px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}
     />
   );
 };

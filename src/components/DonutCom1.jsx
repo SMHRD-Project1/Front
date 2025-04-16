@@ -33,26 +33,27 @@ const ChartComponent = ({ dong, cate }) => {
 
     // ECharts 옵션
     const option = {
+      
       tooltip: {
         trigger: 'item',
         formatter: '{b}: {d}%'  // 퍼센트로 포맷
       },
       legend: {
-        top: '5%',
+        top: '80%',
         left: 'center'
       },
       title: {
         text: '남/녀 배달 비율',
         subtext: `${dong} - ${cate}`,
         left: 'center',
-        top: 'center',
+        top: '5%',
         textStyle: {
-          fontSize: 16,
+          fontSize: 18,
           fontWeight: 'bold',
           color: '#333'
         },
         subtextStyle: {
-          fontSize: 12,
+          fontSize: 16,
           color: '#666'
         }
       },
@@ -60,15 +61,16 @@ const ChartComponent = ({ dong, cate }) => {
         {
           name: '배달 비율',
           type: 'pie',
-          radius: ['40%', '70%'],
-          center: ['50%', '70%'],  // 하단으로 내려서 반원처럼 보이게
+          radius: ['40%', '100%'],  // 도넛 차트의 크기를 키움
+          center: ['50%', '80%'],
           startAngle: 180,
           endAngle: 360,
           label: {
             show: true,
             position: 'inside',
-            formatter: '{b}: {d}%',  // 퍼센트 표시
-            color: '#fff'
+            formatter: '{b}: {d}%',
+            color: '#fff',
+            fontSize: 12  // 라벨 글자 크기 조정
           },
           data: [
             { value: femaleRatio, name: '여자', itemStyle: { color: '#FF7F50' } },
@@ -88,7 +90,7 @@ const ChartComponent = ({ dong, cate }) => {
   return (
     <div 
       ref={chartRef} 
-      style={{ width: '100%', height: '300px', backgroundColor: '#f9f9f9', borderRadius: '8px' }} 
+      style={{ width: '300px', height: '200px', backgroundColor: '#f9f9f9', borderRadius: '8px' }} 
     />
   );
 };

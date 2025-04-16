@@ -21,19 +21,45 @@ const ChartComponent = ({ dong }) => {
         .filter(item => item.시간대 && item.시간대.trim() === zone)
         .reduce((acc, cur) => acc + (parseInt(cur.거래건수) || 0), 0);
 
-      return sum; // 해당 시간대의 총합 반환
+      return Math.round(sum / 31); // 일평균으로 계산
     });
 
     // ECharts 옵션
     const option = {
-      title: { text: `${dong} 시간대별 유동 인구` },
-      tooltip: { trigger: 'axis' },
+      title: { 
+        text: `${dong} 유동인구 추이`,
+        left: 'center',
+        top: '5%',
+        textStyle: {
+          fontSize: 18,
+          fontWeight: 'bold'
+        }
+      },
+      tooltip: {
+        trigger: 'axis'
+      },
+      legend: {
+        data: ['유동인구'],
+        top: '15%'
+      },
+      grid: {
+        left: '3%',
+        right: '5%',
+        top: '25%',
+        bottom: '5%',
+        containLabel: true
+      },
       xAxis: {
         type: 'category',
         data: timeZones
       },
       yAxis: {
-        type: 'value'
+        type: 'value',
+        scale: true,
+        axisLabel: {
+          formatter: '{value} 명',
+          fontWeight: 'bold'
+        }
       },
       series: [
         {
@@ -59,7 +85,7 @@ const ChartComponent = ({ dong }) => {
   return (
     <div
       ref={chartRef}
-      style={{ width: '100%', height: '300px', backgroundColor: '#f8f8f8', borderRadius: '10px' }}
+      style={{ width: '300px', height: '200px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}
     />
   );
 };

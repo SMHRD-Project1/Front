@@ -34,34 +34,69 @@ const ChartComponent = ({ dong, cate }) => {
       return maleSales + femaleSales; // 합산된 매출
     });
 
+    // 매장과 배달 총 매출 계산
+    const 매장Total = 매장Data.reduce((acc, val) => acc + val, 0);
+    const 배달Total = 배달Data.reduce((acc, val) => acc + val, 0);
+    const totalSales = 매장Total + 배달Total;
+    
+    // 비율 계산
+    const 매장Ratio = totalSales ? Math.round((매장Total / totalSales) * 100) : 0;
+    const 배달Ratio = totalSales ? Math.round((배달Total / totalSales) * 100) : 0;
+
     // ECharts 옵션
     const option = {
-      title: { text: `${dong} - ${cate} 매장과 배달 매출 비교` },
+      title: { 
+        text: `매장/배달 매출 비교`,
+        subtext: `매장 ${매장Ratio}% / 배달 ${배달Ratio}%`,
+        left: 'center',
+        top: '5%',
+        textStyle: {
+          fontSize: 18,
+          fontWeight: 'bold'
+        },
+        subtextStyle: {
+          fontSize: 14,
+          color: '#666'
+        }
+      },
       tooltip: {
         trigger: 'axis'
       },
       legend: {
-        data: ['매장', '배달']
+        data: ['매장', '배달'],
+        top: '28%'
+      },
+      grid: {
+        left: '3%',
+        right: '5%',
+        top: '40%',
+        bottom: '5%',
+        containLabel: true
       },
       xAxis: {
         type: 'category',
         data: months
       },
       yAxis: {
-        type: 'value'
+        type: 'value',
+        scale: true,
+        axisLabel: {
+          formatter: '{value} 만원',
+          fontWeight: 'bold'
+        }
       },
       series: [
         {
           name: '매장',
           type: 'line',
           data: 매장Data,
-          smooth: true, // 부드러운 곡선
+          smooth: true,
         },
         {
           name: '배달',
           type: 'line',
           data: 배달Data,
-          smooth: true, // 부드러운 곡선
+          smooth: true,
         }
       ]
     };
@@ -75,7 +110,7 @@ const ChartComponent = ({ dong, cate }) => {
   return (
     <div
       ref={chartRef}
-      style={{ width: '100%', height: '300px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}
+      style={{ width: '300px', height: '200px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}
     />
   );
 };

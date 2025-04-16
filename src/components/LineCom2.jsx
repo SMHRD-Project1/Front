@@ -17,10 +17,12 @@ const 동연결 = {
   동천동: ['광천동', '유덕동']
 };
 
-const ChartComponent = ({ dong, cate }) => {
+const LineCom2 = ({ dong, cate }) => {
   const chartRef = useRef(null);
 
   useEffect(() => {
+    if (!chartRef.current) return;
+    
     const chart = echarts.init(chartRef.current);
 
     // 선택한 동과 관련 동을 포함한 전체 목록 만들기
@@ -53,34 +55,65 @@ const ChartComponent = ({ dong, cate }) => {
     });
 
     const option = {
-      title: { text: `상가 월 매출 (${cate})` },
+      title: { 
+        text: `인근 동 ${cate} 매장 매출`,
+        left: 'center',
+        top: '2%'
+      },
       tooltip: {
         trigger: 'axis'
       },
       legend: {
-        data: relatedDongs
+        data: relatedDongs,
+        textStyle: {
+          fontSize: 10
+        },
+        itemWidth: 10,
+        itemHeight: 10,
+        top: '15%'
+      },
+      grid: {
+        left: '3%',
+        right: '5%',
+        top: '35%',
+        bottom: '10%',
+        containLabel: true
       },
       xAxis: {
         type: 'category',
         data: months
       },
-      yAxis: {
-        type: 'value'
+      yAxis: { 
+        type: 'value',
+        scale: true,
+        axisLabel: {
+          formatter: '{value} 만원',
+          fontWeight: 'bold'
+        }
       },
       series
     };
 
     chart.setOption(option);
 
-    return () => chart.dispose();
+    // 창 크기 변경 시 차트 크기 조정
+    const handleResize = () => {
+      chart.resize();
+    };
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      chart.dispose();
+      window.removeEventListener('resize', handleResize);
+    };
   }, [dong, cate]);
 
   return (
-    <div
-      ref={chartRef}
-      style={{ width: '100%', height: '300px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}
-    />
+    <div>
+      <div ref={chartRef} style={{ width: '300px', height: '200px', backgroundColor: '#f9f9f9', borderRadius: '8px' }} />
+    </div>
   );
 };
 
-export default ChartComponent;
+export default LineCom2;
+
