@@ -3,9 +3,11 @@
 import '../styles/main.css';
 import axios from 'axios';
 import React, { useImperativeHandle, forwardRef, useEffect, useRef, useState } from 'react';
+import { useLocation } from '../contexts/LocationContext'
 
-const MainPage = forwardRef((props, ref) => {
+const MapPage = forwardRef((props, ref) => {
   let result = '';
+  const { setPolygonCoords } = useLocation();
   const polygonRef = useRef(null);
   const polylineRef = useRef(null);
   const mapRef = useRef(null);
@@ -19,10 +21,6 @@ const MainPage = forwardRef((props, ref) => {
   const [polymap_, setPolymap_] = useState(false);
   const [btnFlag, setBtnFlag] = useState(false);
   const [markerList, setMarkerList] = useState([]);
-
-
-  
-
 
   //  초기화
   const clearAll = () => {
@@ -52,6 +50,17 @@ const MainPage = forwardRef((props, ref) => {
   };
 
   //  폴리곤 그리기
+  // const drowPolygon = (path) => {
+  //   polygonRef.current = new naver.maps.Polygon({
+  //     map: mapRef.current,
+  //     paths: [path],
+  //     fillColor: '#ffff33',
+  //     fillOpacity: 0.3,
+  //     strokeColor: '#ffff33',
+  //     strokeOpacity: 0.6,
+  //     strokeWeight: 3,
+  //   });
+  // };
   const drowPolygon = (path) => {
     polygonRef.current = new naver.maps.Polygon({
       map: mapRef.current,
@@ -62,6 +71,10 @@ const MainPage = forwardRef((props, ref) => {
       strokeOpacity: 0.6,
       strokeWeight: 3,
     });
+
+    // ✅ Context에 좌표 저장
+    const coords = path.map(latlng => [latlng.lng(), latlng.lat()]);
+    setPolygonCoords(coords);
   };
 
   //  지도 로딩
@@ -215,21 +228,44 @@ const MainPage = forwardRef((props, ref) => {
       });
   }, []);
 
+  // const btn2Event = (text1, text2) => {
+  //   clearAll();
+  //   console.log(text1, text2);
+  //   if (text2 === '다각형 설정') {
+  //     btnFlagRef.current = true;
+  //   } else {
+  //     btnFlagRef.current = false;
+  //     if (text2 != '동 설정') {
+  //       dong.forEach((item) => {
+  //         if (item.properties.adm_nm === text2) {
+  //           dongPositionsRef.current = item.geometry.coordinates[0];
+  //           clearAll();
+  //           drowPolygon(dongPositionsRef.current);
+            
+
+  //         }
+  //       });
+  //     }
+  //   }
+  // };
   const btn2Event = (text1, text2) => {
     clearAll();
-    console.log(text1, text2);
     if (text2 === '다각형 설정') {
       btnFlagRef.current = true;
     } else {
       btnFlagRef.current = false;
-      if (text2 != '동 설정') {
+      if (text2 !== '동 설정') {
         dong.forEach((item) => {
           if (item.properties.adm_nm === text2) {
             dongPositionsRef.current = item.geometry.coordinates[0];
             clearAll();
-            drowPolygon(dongPositionsRef.current);
-            
 
+            // naver LatLng로 변환
+            const convertedPath = dongPositionsRef.current.map(coord =>
+              new naver.maps.LatLng(coord[1], coord[0])
+            );
+
+            drowPolygon(convertedPath); // 변경된 부분
           }
         });
       }
@@ -248,4 +284,4 @@ const MainPage = forwardRef((props, ref) => {
   );
 });
 
-export default MainPage;
+export default MapPage;

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import '../styles/Style.css';
-import MainPage from './MainPage';
+import MapPage from './MapPage';
 import RealEstate from './RealEstate';
 import 업종분류 from '../config/업종분류.json'
 import ChatBot from "../ChatBot";
@@ -9,6 +9,7 @@ import 업종코드목록 from '../config/업종코드목록.json';
 import KakaoLogin from 'react-kakao-login';
 import axios from 'axios';
 import DetailPage from "./DetailPage";
+import { LocationProvider } from '../contexts/LocationContext';
 
 const Home = () => {
     const [selectedCategory, setSelectedCategory] = useState("업종");
@@ -208,7 +209,35 @@ const Home = () => {
 
     return (
         <div className="home-container">
-            <MainPage
+            <LocationProvider>
+                <div>
+                    {/* 부동산 정보 토글 버튼 */}
+                    <button
+                        className={`real-estate-toggle ${showRealEstate ? 'active' : ''}`}
+                        onClick={() => setShowRealEstate(!showRealEstate)}
+                    >
+                        부동산정보
+                    </button>
+
+                    {/* RealEstate 컴포넌트 열기/닫기 */}
+                    {showRealEstate && (
+                        <RealEstate
+                            isOpen={showRealEstate}
+                            onClose={() => setShowRealEstate(false)} // 닫기 버튼 클릭 시 상태 false로 설정
+                        />
+                    )}
+
+                    <MapPage
+                        ref={mainPageRef}
+                        selectedCategory={selectedCategory}
+                        selectedRegion={selectedRegion}
+                        selectedDong={selectedDong}
+                        업종코드={업종코드}
+                        onPolygonSet={handlePolygonSet}
+                    />
+                </div>
+            </LocationProvider>
+            {/* <MapPage
                 ref={mainPageRef}
                 selectedCategory={selectedCategory}
                 selectedRegion={selectedRegion}
@@ -216,20 +245,20 @@ const Home = () => {
                 업종코드={업종코드}
                 onPolygonSet={handlePolygonSet}
             />
-            <DetailPage 
-                selectedRegion={selectedRegion}
-                selectedDong={selectedDong}
-                selectedCategory={selectedCategory}
-            />
-            <button 
+            <button
                 className={`real-estate-toggle ${showRealEstate ? 'active' : ''}`}
                 onClick={() => setShowRealEstate(!showRealEstate)}
             >
                 부동산정보
             </button>
-            <RealEstate 
+            <RealEstate
                 isOpen={showRealEstate}
                 onClose={() => setShowRealEstate(!showRealEstate)}
+            /> */}
+            <DetailPage
+                selectedRegion={selectedRegion}
+                selectedDong={selectedDong}
+                selectedCategory={selectedCategory}
             />
 
             {/* 지도 위에 떠있는 버튼들 */}
