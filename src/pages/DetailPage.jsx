@@ -58,7 +58,7 @@ const DetailPage = ({ selectedRegion, selectedDong, selectedCategory, data }) =>
       document.removeEventListener('mouseup', handleMouseUp);
     };
   }, []);
-
+  
   return (
     <>
       <button

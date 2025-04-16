@@ -107,7 +107,7 @@ const MyPage = () => {
                     <ChartComponent dong={'행정동'} cate={'업종'} />
                   </div>
                 </div>
-                <div className="graphs-container">
+                <div >
                   <h4>매출 분석</h4>
                   <div className="graph-group">
                     <div className='graph'><LineCom1 dong={'행정동'} cate={'업종'} /></div>
