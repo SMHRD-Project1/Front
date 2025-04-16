@@ -107,7 +107,7 @@ const MyPage = () => {
                     <ChartComponent dong={'행정동'} cate={'업종'} />
                   </div>
                 </div>
-                <div >
+                <div>
                   <h4>매출 분석</h4>
                   <div className="graph-group">
                     <div style={{ width: '300px', height: '200px' }}><LineCom1 dong={'행정동'} cate={'업종'} /></div>
@@ -123,6 +123,7 @@ const MyPage = () => {
                     <div style={{ width: '300px', height: '200px' }}><LineCom4 dong={'행정동'} cate={'업종'} /></div>
                     <div style={{ width: '300px', height: '200px' }}><DonutCom1 dong={'행정동'} cate={'업종'} /></div>
                     <div style={{ width: '300px', height: '200px' }}><LineCom5 dong={'행정동'} cate={'업종'} /></div>
+
                   </div>
 
                   <h4>유동인구</h4>
