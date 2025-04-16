@@ -107,32 +107,31 @@ const MyPage = () => {
                     <ChartComponent dong={'행정동'} cate={'업종'} />
                   </div>
                 </div>
-                <div >
+                <div>
                   <h4>매출 분석</h4>
                   <div className="graph-group">
-                    <div className='graph'><LineCom1 dong={'행정동'} cate={'업종'} /></div>
-                    <div className='graph'><LineCom2 dong={'행정동'} cate={'업종'} /></div>
-                    <div className='graph'>유사 업종 매출 추이 여러선 평균매출</div>
-                    <div className='graph'>유사 업종 수 //막대그래프</div>
-
+                    <div className='graph' style={{ width: '300px', height: '200px' }}><LineCom1 dong={'행정동'} cate={'업종'} /></div>
+                    <div className='graph' style={{ width: '300px', height: '200px' }}><LineCom2 dong={'행정동'} cate={'업종'} /></div>
+                    {/* <div className='graph'>유사 업종 매출 추이 여러선 평균매출</div>
+              <div className='graph'>유사 업종 수 //막대그래프</div> */}
                   </div>
 
                   <h4>배달 분석</h4>
                   <div className="graph-group">
-                    <div className='graph'><LineCom3 dong={'행정동'} cate={'업종'} /></div>
-                    <div className='graph'><LineCom4 dong={'행정동'} cate={'업종'} /></div>
-                    <div className='graph'><DonutCom1 dong={'행정동'} cate={'업종'} /></div>
-                    <div className='graph'><LineCom5 dong={'행정동'} cate={'업종'} /></div>
+                    <div className='graph' style={{ width: '300px', height: '200px' }}><LineCom3 dong={'행정동'} cate={'업종'} /></div>
+                    <div className='graph' style={{ width: '300px', height: '200px' }}><LineCom4 dong={'행정동'} cate={'업종'} /></div>
+                    <div className='graph' style={{ width: '300px', height: '200px' }}><DonutCom1 dong={'행정동'} cate={'업종'} /></div>
+                    <div className='graph' style={{ width: '300px', height: '200px' }}><LineCom5 dong={'행정동'} cate={'업종'} /></div>
                   </div>
 
                   <h4>유동인구</h4>
                   <div className="graph-group">
-                    <div className='graph'><LineCom6 dong={'행정동'} cate={'업종'} /></div>
-                    <div className='graph'><BarCom1 dong={'행정동'} cate={'업종'} /></div>
-                    <div className='graph'><BarCom2 dong={'행정동'} cate={'업종'} /></div>
-                    <div className='graph'>성별 유동 인구 //다차원 차트</div>
-                    <div className='graph'><BarCom3 dong={'행정동'} cate={'업종'} /></div>
-                    <div className='graph'><LineCom8 dong={'행정동'} cate={'업종'} /></div>
+                    <div className='graph' style={{ width: '300px', height: '200px' }}><LineCom6 dong={'행정동'} cate={'업종'} /></div>
+                    <div className='graph' style={{ width: '300px', height: '200px' }}><BarCom1 dong={'행정동'} cate={'업종'} /></div>
+                    <div className='graph' style={{ width: '300px', height: '200px' }}><BarCom2 dong={'행정동'} cate={'업종'} /></div>
+                    {/* <div className='graph' style={{ width: '300px', height: '200px' }}>성별 유동 인구 //다차원 차트</div> */}
+                    <div className='graph' style={{ width: '300px', height: '200px' }}><BarCom3 dong={'행정동'} cate={'업종'} /></div>
+                    <div className='graph2' ><LineCom8 dong={'행정동'} cate={'업종'} /></div>
                   </div>
                 </div>
               </div>
