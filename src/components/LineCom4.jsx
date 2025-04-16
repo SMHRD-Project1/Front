@@ -50,19 +50,44 @@ const ChartComponent = ({ dong, cate }) => {
     });
 
     const option = {
-      title: { text: `상가 월 매출 (${cate})` },
+      title: { 
+        text: `인근 동 ${cate} 배달 매출`,
+        left: 'center',
+        top: '5%',
+        textStyle: {
+          fontSize: 18
+        }
+      },
       tooltip: {
         trigger: 'axis'
       },
       legend: {
-        data: relatedDongs
+        data: relatedDongs,
+        top: '22%',
+        textStyle: {
+          fontSize: 10
+        },
+        itemWidth: 10,
+        itemHeight: 10
+      },
+      grid: {
+        left: '3%',
+        right: '5%',
+        top: '40%',
+        bottom: '5%',
+        containLabel: true
       },
       xAxis: {
         type: 'category',
         data: months
       },
       yAxis: {
-        type: 'value'
+        type: 'value',
+        scale: true,
+        axisLabel: {
+          formatter: '{value} 만원',
+          fontWeight: 'bold'
+        }
       },
       series
     };
@@ -75,7 +100,7 @@ const ChartComponent = ({ dong, cate }) => {
   return (
     <div
       ref={chartRef}
-      style={{ width: '100%', height: '300px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}
+      style={{ width: '300px', height: '200px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}
     />
   );
 };
