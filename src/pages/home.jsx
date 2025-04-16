@@ -3,14 +3,12 @@ import '../styles/Style.css';
 import MainPage from './MainPage';
 import RealEstate from './RealEstate';
 import 업종분류 from '../config/업종분류.json'
-// import ChatbotWindow from "./ChatbotWindow";
 import ChatBot from "../ChatBot";
 import { useNavigate } from 'react-router-dom';  // 라우터 네비게이션을 위해 추가
 import 업종코드목록 from '../config/업종코드목록.json';
 import KakaoLogin from 'react-kakao-login';
 import axios from 'axios';
 import DetailPage from "./DetailPage";
-
 
 
 const Home = () => {
@@ -31,22 +29,12 @@ const Home = () => {
     const [showRealEstate, setShowRealEstate] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userInfo, setUserInfo] = useState(null);
-    const [showDetailPage, setShowDetailPage] = useState(false);
 
     const dongList = [
         "광천동", "금호동", "농성동", "동천동", "상무1동", "상무2동",
         "서창동", "양동", "유덕동", "치평동", "풍암동", "화정동"
     ];
 
-    // 동 설정 클릭 시 동 목록을 보여줌
-    const handleRegionButtonClick = () => {
-        setShowRegionMenu(!showRegionMenu);
-    };
-
-    // 동 목록에서 동을 선택했을 때
-    const handleDongSelect = (dong) => {
-        setSelectedRegion(dong);
-    };
 
     // btn2Event의 로직을 Home 컴포넌트로 가져옴
     const handleRegionAndCategory = () => {
@@ -90,16 +78,10 @@ const Home = () => {
     }, [text1]);
 
     useEffect(() => {
-        if (업종코드) {
-            handleRegionAndCategory();
+        if (업종코드 && text2 && mainPageRef.current?.btn2Event) {
+            mainPageRef.current.btn2Event(text1, text2);
         }
-    }, [업종코드]);
-
-    useEffect(() => {
-        if (text2) {
-            handleRegionAndCategory();
-        }
-    }, [text2]);
+    }, [업종코드, text2]);
 
     const handleButtonClick = () => {
         if (isChatVisible) {

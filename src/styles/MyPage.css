@@ -1,0 +1,126 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f0f2f5; /* 전체 배경은 아주 연한 회색 */
+  }
+  
+  .container {
+    display: flex;
+    height: 100vh;
+  }
+  
+  /* 사이드바 */
+  .sidebar {
+    width: 220px;
+    background-color: #e0e0e0; /* 밝은 회색 */
+    padding: 20px;
+  }
+  
+  .sidebar h3 {
+    margin-bottom: 20px;
+    font-size: 18px;
+    color: #333;
+  }
+  
+  .region-button {
+    display: block;
+    margin-bottom: 10px;
+    background-color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    color: #333;
+    transition: background-color 0.2s;
+  }
+  
+  .region-button:hover {
+    background-color: #d8e9ff;
+  }
+  
+  .region-button.active {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+
+  
+  .title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    color: #222;
+  }
+  
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    padding: 10px;
+  }
+  
+  .card {
+    background-color: white;
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 240px;
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .chart-container {
+    height: 150px;
+    margin-bottom: 10px;
+    background-color: #f5f7fb;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #777;
+  }
+  
+  .chart-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .sub-info {
+    font-size: 12px;
+    color: gray;
+    margin-bottom: 10px;
+  }
+  
+  .top-navigation {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+  }
+  
+  /* .Button2 {
+    padding: 8px 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .Button2:hover {
+    background-color: #45a049;
+  } */
+  
+  .no-selection {
+    text-align: center;
+    color: #666;
+    font-size: 18px;
+    margin-top: 50px;
+  }

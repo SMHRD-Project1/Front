@@ -5,7 +5,7 @@ import ExampleDonut from "./chart/ExampleDonut";
 import ChatBot from "./ChatBot"
 import Home from "./pages/home";
 import StackedLineChart from "./components/StackedLineChart";
-
+import MyPage from "./pages/MyPage";
 
 function App() {
   return (
@@ -24,7 +24,7 @@ function App() {
       <Routes> 
         <Route path="/" element={<Home />} />
         <Route path="/stackedlinechart" element={<StackedLineChart />} />
-        {/* <Route path="/mypage" element={<MyPage />} /> */}
+        <Route path="/mypage" element={<MyPage />} />
       </Routes>
     </Router>
   );
