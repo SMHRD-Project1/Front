@@ -92,7 +92,7 @@ const DetailPage = ({ selectedRegion, selectedDong, selectedCategory, data }) =>
               {/* 상권 분석 정보 (그래프가 들어갈 공간) */}
               <div className="chart-container">
                 <div id="chart" className="chart">
-                  <ChartComponent />
+                  <ChartComponent dong={selectedRegion} cate={selectedCategory} />
                 </div>
               </div>
 

@@ -1,44 +1,60 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as echarts from 'echarts';
-import 배달 from '../config/배달.json';
+import 상가 from '../config/상가.json';
 
-const ChartComponent = ({ dong, cate, sex }) => {
+const ChartComponent = ({ dong, cate }) => {
   const chartRef = useRef(null);
+  const [averageSales, setAverageSales] = useState(0);
 
   useEffect(() => {
     const chart = echarts.init(chartRef.current);
 
-    const target1 = 배달.find(item => item.행정동 === dong && item.업종이름 === cate && item.성별 === "여자");
-    const target2 = 배달.find(item => item.행정동 === dong && item.업종이름 === cate && item.성별 === "남자");
-
     const months = [
-      "23.12", "24.01", "24.02", "24.03", "24.04", "24.05", 
-      "24.06", "24.07", "24.08", "24.09", "24.10", "24.11", "24.12"
+      "23.12", "24.01", "24.02", "24.03", "24.04", "24.05",
+      "24.06", "24.07", "24.08", "24.09", "24.10", "24.11"
     ];
 
-    const salesData = target1 ? months.map(month => Number(target1[month])) : [];
+    // 상가 데이터에서 선택한 동과 업종에 대한 월별 매출을 가져오기
+    const 매장Data = months.map(month => {
+      const store = 상가.find(item => item.행정동 === dong && item.업종이름 === cate);
+      return store ? Number(store[month]) || 0 : 0;
+    });
 
+    // 평균 매출 계산
+    const totalSales = 매장Data.reduce((acc, curr) => acc + curr, 0);
+    const avgSales = totalSales / 매장Data.length;
+    setAverageSales(avgSales.toFixed(2));
+
+    // ECharts 옵션 (막대 그래프)
     const option = {
-      title: { text: '상가 월 매출' },
-      tooltip: {},
-      xAxis: { data: months },
-      yAxis: {},
-      series: [{
-        name: '점포 수',
-        type: 'bar',
-        data: salesData
-      }]
+      title: { text: `${dong} - ${cate} 매장 매출` },
+      tooltip: { trigger: 'axis' },
+      xAxis: { type: 'category', data: months },
+      yAxis: { type: 'value' },
+      series: [
+        {
+          name: '매장',
+          type: 'bar', // ✅ 바 타입으로 변경
+          data: 매장Data,
+          itemStyle: {
+            color: '#73C0DE',
+            borderRadius: [4, 4, 0, 0] // 위쪽 모서리 둥글게
+          }
+        }
+      ]
     };
 
     chart.setOption(option);
     return () => chart.dispose();
-  }, [dong, cate]); // ✅ 의존성 추가
+  }, [dong, cate]);
 
   return (
-    <div 
-      ref={chartRef} 
-      style={{ width: '100%', height: '200px', backgroundColor: '#f0f0f0', borderRadius: '8px' }} 
-    />
+    <div>
+      <div ref={chartRef} style={{ width: '100%', height: '300px', backgroundColor: '#f9f9f9', borderRadius: '8px' }} />
+      <div style={{ marginTop: '10px', fontSize: '16px', fontWeight: 'bold' }}>
+        <p>{dong} - {cate} 매장의 평균 매출: {averageSales} 원</p>
+      </div>
+    </div>
   );
 };
 
