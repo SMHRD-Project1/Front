@@ -13,7 +13,7 @@ const MyPage = () => {
     "관심지역 4",
     "관심지역 5",
   ];
-
+// 클랙했을떄 이미 있으면 제거 없으면 새로 창띄우는것
   const handleRegionClick = (region) => {
     setSelectedRegions(prev => {
       if (prev.includes(region)) {

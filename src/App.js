@@ -7,7 +7,6 @@ import Home from "./pages/home";
 import StackedLineChart from "./components/StackedLineChart";
 import MyPage from "./pages/MyPage";
 
-
 function App() {
   return (
     

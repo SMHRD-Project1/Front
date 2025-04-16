@@ -45,14 +45,6 @@ body {
     color: white;
   }
   
-  /* 메인 컨텐츠 */
-  .main {
-    flex: 1;
-    padding: 30px;
-    display: flex;
-    flex-direction: column;
-    background-color: white; /* 화면 본문은 흰색 */
-  }
   
   .title {
     text-align: center;
@@ -110,20 +102,7 @@ body {
     right: 20px;
     z-index: 1000;
   }
-  
-  .Button2 {
-    padding: 8px 16px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-  }
-  
-  .Button2:hover {
-    background-color: #45a049;
-  }
+ 
   
   .no-selection {
     text-align: center;
