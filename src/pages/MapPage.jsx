@@ -3,11 +3,11 @@
 import '../styles/main.css';
 import axios from 'axios';
 import React, { useImperativeHandle, forwardRef, useEffect, useRef, useState } from 'react';
-import { useLocation } from '../contexts/LocationContext'
+import { useLocation } from '../contexts/LocationContext'; // 추가
 
-const MapPage = forwardRef((props, ref) => {
+const MainPage = forwardRef(({ 업종코드 }, ref) => {
+  const { setPolygonCoords } = useLocation(); // 추가
   let result = '';
-  const { setPolygonCoords } = useLocation();
   const polygonRef = useRef(null);
   const polylineRef = useRef(null);
   const mapRef = useRef(null);
@@ -50,17 +50,6 @@ const MapPage = forwardRef((props, ref) => {
   };
 
   //  폴리곤 그리기
-  // const drowPolygon = (path) => {
-  //   polygonRef.current = new naver.maps.Polygon({
-  //     map: mapRef.current,
-  //     paths: [path],
-  //     fillColor: '#ffff33',
-  //     fillOpacity: 0.3,
-  //     strokeColor: '#ffff33',
-  //     strokeOpacity: 0.6,
-  //     strokeWeight: 3,
-  //   });
-  // };
   const drowPolygon = (path) => {
     polygonRef.current = new naver.maps.Polygon({
       map: mapRef.current,
@@ -75,6 +64,47 @@ const MapPage = forwardRef((props, ref) => {
     // ✅ Context에 좌표 저장
     const coords = path.map(latlng => [latlng.lng(), latlng.lat()]);
     setPolygonCoords(coords);
+  
+
+    // 폴리곤이 그려진 후 API 호출을 위한 좌표 설정
+    const coordinates = path.map(coord => {
+      if (coord.x && coord.y) {
+        return `${coord.x}%20${coord.y}`;
+      } else if (coord.lat && coord.lng) {
+        return `${coord.lng}%20${coord.lat}`;
+      } else {
+        return `${coord[0]}%20${coord[1]}`;
+      }
+    }).join(',');
+
+
+    // 업종코드가 있는 경우 API 호출
+    if (업종코드) {
+
+      const api = `https://apis.data.go.kr/B553077/api/open/sdsc2/storeListInPolygon?serviceKey=${process.env.REACT_APP_SANGGWON_API_KEY}&pageNo=1&numOfRows=1000&key=POLYGON%20((${coordinates}))&indsSclsCd=${업종코드}&type=json`;
+
+
+      axios
+        .get(api)
+        .then((res) => {
+
+          if (res.data && res.data.body && res.data.body.items) {
+
+            // 기존 마커 제거
+            markerRef.current.forEach((marker) => marker.setMap(null));
+            markerRef.current = [];
+
+            // 새 마커 추가
+            res.data.body.items.forEach((item) => {
+              const position = new naver.maps.LatLng(item.lat, item.lon);
+              markerSet(position);
+            });
+          }
+        })
+        .catch((err) => {
+          console.error("❌ [MainPage] API 호출 오류:", err);
+        });
+    }
   };
 
   //  지도 로딩
@@ -104,8 +134,7 @@ const MapPage = forwardRef((props, ref) => {
   const makerEvent = () => {
     btnFlagRef.current = !btnFlagRef.current;
     setBtnFlag(btnFlagRef.current);
-  };
-
+  }
   //  마커
   useEffect(() => {
     if (!mapRef.current) return;
@@ -159,6 +188,12 @@ const MapPage = forwardRef((props, ref) => {
           polylineRef.current.setMap(null);
           polylineRef.current = null;
         }
+
+        // 업종코드가 있는 경우 자동으로 API 호출
+        if (업종코드) {
+          polymap.current = true;
+          setPolymap_(true);
+        }
       });
     }
 
@@ -177,15 +212,24 @@ const MapPage = forwardRef((props, ref) => {
         .map((item) => `${item.x}%20${item.y}`)
         .join(',');
 
-      const api = `https://apis.data.go.kr/B553077/api/open/sdsc2/storeListInPolygon?serviceKey=${process.env.REACT_APP_SANGGWON_API_KEY}&pageNo=1&numOfRows=1000&key=POLYGON%20((${result}))&indsLclsCd=I2&indsMclsCd=I212&indsSclsCd=I21201&type=json`;
+
+      // 업종코드가 비어있는지 확인
+      if (!업종코드) {
+        return;
+      }
+
+      const api = `https://apis.data.go.kr/B553077/api/open/sdsc2/storeListInPolygon?serviceKey=${process.env.REACT_APP_SANGGWON_API_KEY}&pageNo=1&numOfRows=1000&key=POLYGON%20((${result}))&indsSclsCd=${업종코드}&type=json`;
+
 
       axios
         .get(api)
         .then((res) => {
-          setMarkerPosition(res.data);
 
-          // API 데이터 저장 (로컬스토리지)
-          localStorage.setItem('markerPosition', JSON.stringify(res.data));
+          if (res.data && res.data.body && res.data.body.items) {
+            setMarkerPosition(res.data);
+            localStorage.setItem('markerPosition', JSON.stringify(res.data));
+          } else {
+          }
 
           markerRef.current.forEach((marker) => marker.setMap(null));
           markerRef.current = [];
@@ -194,6 +238,7 @@ const MapPage = forwardRef((props, ref) => {
         })
         .catch((err) => {
           console.error('Error : ', err);
+          console.error('Error response:', err.response);
         });
     }
   }, [polymap_]);
@@ -201,13 +246,29 @@ const MapPage = forwardRef((props, ref) => {
   // 상권 Pin찍기
   useEffect(() => {
     if (markerPosition) {
-      const pins = markerPosition.body.items.map(
-        (position) => new naver.maps.LatLng(position.lat, position.lon)
-      );
+      try {
 
-      pins.forEach((pin) => {
-        markerSet(pin);
-      });
+        if (!markerPosition.body || !markerPosition.body.items || !Array.isArray(markerPosition.body.items)) {
+          return;
+        }
+
+        // 기존 마커 제거
+        markerRef.current.forEach((marker) => marker.setMap(null));
+        markerRef.current = [];
+
+        // 새 마커 추가
+        const pins = markerPosition.body.items.map((position) => {
+          return new naver.maps.LatLng(position.lat, position.lon);
+        });
+
+
+        pins.forEach((pin) => {
+          markerSet(pin);
+        });
+
+      } catch (error) {
+        console.error(" [MainPage] 마커 찍기 오류:", error);
+      }
     }
   }, [markerPosition]);
 
@@ -228,28 +289,9 @@ const MapPage = forwardRef((props, ref) => {
       });
   }, []);
 
-  // const btn2Event = (text1, text2) => {
-  //   clearAll();
-  //   console.log(text1, text2);
-  //   if (text2 === '다각형 설정') {
-  //     btnFlagRef.current = true;
-  //   } else {
-  //     btnFlagRef.current = false;
-  //     if (text2 != '동 설정') {
-  //       dong.forEach((item) => {
-  //         if (item.properties.adm_nm === text2) {
-  //           dongPositionsRef.current = item.geometry.coordinates[0];
-  //           clearAll();
-  //           drowPolygon(dongPositionsRef.current);
-            
-
-  //         }
-  //       });
-  //     }
-  //   }
-  // };
   const btn2Event = (text1, text2) => {
     clearAll();
+    console.log()
     if (text2 === '다각형 설정') {
       btnFlagRef.current = true;
     } else {
@@ -272,10 +314,46 @@ const MapPage = forwardRef((props, ref) => {
     }
   };
 
-  // ✅ 외부에서 접근 가능한 함수들 정의
-  useImperativeHandle(ref, () => ({
-    btn2Event,
-  }));
+  // 외부에서 접근 가능한 함수들 
+// 외부에서 접근 가능한 함수들
+useImperativeHandle(ref, () => ({
+  btn1Event: (업종) => {
+    console.log("✅ [MainPage] 버튼1 이벤트 실행됨 - 업종:", 업종);
+    // 필요 시 업종 관련 로직 추가
+  },
+  btn2Event: (지역또는다각형, 좌표 = null) => {
+    console.log("✅ [MainPage] 버튼2 이벤트 실행됨 - 지역/다각형:", 지역또는다각형, "좌표:", 좌표);
+    clearAll();
+
+    if (지역또는다각형 === '다각형 설정') {
+      btnFlagRef.current = true;
+      console.log("🟨 [MainPage] 다각형 설정 모드 진입");
+
+      if (좌표 && Array.isArray(좌표)) {
+        const path = 좌표.map(([lng, lat]) => new naver.maps.LatLng(lat, lng));
+        console.log("🟩 [MainPage] 좌표 기반으로 다각형 그리기");
+        drowPolygon(path);
+      }
+    } else {
+      btnFlagRef.current = false;
+      console.log("🟦 [MainPage] 행정동 설정 시도:", 지역또는다각형);
+
+      const matchedDong = dong.find(item => item.properties.adm_nm === 지역또는다각형);
+      if (matchedDong) {
+        dongPositionsRef.current = matchedDong.geometry.coordinates[0];
+        const convertedPath = dongPositionsRef.current.map(coord =>
+          new naver.maps.LatLng(coord[1], coord[0])
+        );
+        console.log("🟧 [MainPage] 행정동 기반으로 폴리곤 그리기:", 지역또는다각형);
+        drowPolygon(convertedPath);
+      } else {
+        console.warn("❌ [MainPage] 해당 행정동을 찾을 수 없음:", 지역또는다각형);
+      }
+    }
+  }
+}));
+
+
 
   return (
     <div className='main'>
@@ -284,4 +362,4 @@ const MapPage = forwardRef((props, ref) => {
   );
 });
 
-export default MapPage;
+export default MainPage;

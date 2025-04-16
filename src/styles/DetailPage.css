@@ -386,12 +386,11 @@ h2 {
   }
 
 
-  .real-estate {
+.real-estate {
     position: fixed;
-    left: 0;  /* 기본 위치는 화면 왼쪽 */
-    top: 70px;  /* 상단 여백 70px로 수정 */
+    top: 70px;
     width: 400px;
-    height: calc(100vh - 70px);  /* 전체 높이에서 상단 여백만큼 빼기 */
+    height: calc(100vh - 70px);
     background-color: white;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
@@ -401,7 +400,6 @@ h2 {
     overflow-y: auto;
 }
 
-/* 상세페이지가 닫혀있을 때 부동산 정보 열기 */
 .real-estate.open {
     transform: translateX(0);
     visibility: visible;
@@ -409,7 +407,7 @@ h2 {
 
 /* 상세페이지가 열려있을 때 부동산 정보의 위치 조정 */
 .detail-page.open ~ .real-estate {
-    left: var(--detail-page-width, 400px);
+    left: var(--detail-page-width);
 }
 
 /* 상세페이지가 열려있을 때 부동산 정보 열기 */

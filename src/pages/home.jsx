@@ -1,53 +1,42 @@
-import React, { useState, useRef, useEffect } from "react";
-import '../styles/Style.css';
-import MapPage from './MapPage';
-import RealEstate from './RealEstate';
-import 업종분류 from '../config/업종분류.json'
-import ChatBot from "../ChatBot";
-import { useNavigate } from 'react-router-dom';  // 라우터 네비게이션을 위해 추가
-import 업종코드목록 from '../config/업종코드목록.json';
-import KakaoLogin from 'react-kakao-login';
 import axios from 'axios';
-import DetailPage from "./DetailPage";
+import KakaoLogin from 'react-kakao-login';
+import { useNavigate } from 'react-router-dom';  // 라우터 네비게이션을 위해 추가
+import React, { useState, useRef, useEffect } from "react";
 import { LocationProvider } from '../contexts/LocationContext';
 
+import 업종분류 from '../config/업종분류.json'
+import 업종코드목록 from '../config/업종코드목록.json';
+
+import DetailPage from "./DetailPage";
+import MapPage from './MapPage';
+import RealEstate from './RealEstate';
+import ChatBot from "../ChatBot";
+
+import '../styles/Style.css';
+
 const Home = () => {
-    const [selectedCategory, setSelectedCategory] = useState("업종");
-    const [showCategoryMenu, setShowCategoryMenu] = useState(false);
-    const [hoveredMain, setHoveredMain] = useState(null);
-    const [hoveredSub, setHoveredSub] = useState(null);
-    const [selectedRegion, setSelectedRegion] = useState("지역");
-    const [showRegionMenu, setShowRegionMenu] = useState(false);
-    const [selectedDong, setSelectedDong] = useState(''); // 부동산 정보 넘기기 - 0416남규
-    const [selectedProperty, setSelectedProperty] = useState(null); // 부동산 정보 넘기기 - 0416남규
     const mainPageRef = useRef();
-    const [isChatVisible, setIsChatVisible] = useState(false); // 챗봇 대화창 표시 상태
-    const [isClosing, setIsClosing] = useState(false); // 챗봇 닫기 애니메이션 상태
     const navigate = useNavigate();  // 네비게이션 훅 추가
+
     const [text1, setText1] = useState("");  // 업종
     const [text2, setText2] = useState("");  // 지역(동)
-    const [polygonCoordinates, setPolygonCoordinates] = useState(null); // 다각형 좌표 저장
-    const [showRealEstate, setShowRealEstate] = useState(false);
+    const [isClosing, setIsClosing] = useState(false); // 챗봇 닫기 애니메이션 상태
+    const [hoveredSub, setHoveredSub] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userInfo, setUserInfo] = useState(null);
+    const [hoveredMain, setHoveredMain] = useState(null);
+    const [selectedDong, setSelectedDong] = useState(''); // 부동산 정보 넘기기 - 0416남규
+    const [isChatVisible, setIsChatVisible] = useState(false); // 챗봇 대화창 표시 상태
+    const [showRegionMenu, setShowRegionMenu] = useState(false);
+    const [showRealEstate, setShowRealEstate] = useState(false);
+    const [selectedRegion, setSelectedRegion] = useState("지역");
+    const [selectedCategory, setSelectedCategory] = useState("업종");
+    const [showCategoryMenu, setShowCategoryMenu] = useState(false);
+    const [polygonCoordinates, setPolygonCoordinates] = useState(null); // 다각형 좌표 저장
 
     const dongList = [
         "광천동", "금호동", "농성동", "동천동", "상무1동", "상무2동",
         "서창동", "양동", "유덕동", "치평동", "풍암동", "화정동"
     ];
-
-
-    // btn2Event의 로직을 Home 컴포넌트로 가져옴
-    const handleRegionAndCategory = () => {
-        if (mainPageRef.current?.btn2Event) {
-            mainPageRef.current.btn2Event(text1, text2);
-        }
-    };
-
-    // 로그인 페이지로 이동하는 함수
-    const handleLoginClick = () => {
-        navigate('/login');  // /login 경로로 이동
-    };
 
     React.useEffect(() => {
         const handleClickOutside = (e) => {
@@ -116,10 +105,6 @@ const Home = () => {
 
             if (serverResponse.data) {
                 setIsLoggedIn(true);
-                setUserInfo({
-                    id: kakaoId,
-                    nickname: nickname
-                });
                 // 로컬 스토리지에 로그인 정보 저장
                 localStorage.setItem('isLoggedIn', 'true');
                 localStorage.setItem('userInfo', JSON.stringify({ id: kakaoId, nickname: nickname }));
@@ -132,7 +117,6 @@ const Home = () => {
     // 로그아웃 처리
     const handleLogout = () => {
         setIsLoggedIn(false);
-        setUserInfo(null);
         localStorage.removeItem('isLoggedIn');
         localStorage.removeItem('userInfo');
     };
@@ -144,7 +128,6 @@ const Home = () => {
 
         if (savedLoginState === 'true' && savedUserInfo) {
             setIsLoggedIn(true);
-            setUserInfo(JSON.parse(savedUserInfo));
         }
     }, []);
 
@@ -169,16 +152,17 @@ const Home = () => {
         setHoveredSub(null);
 
         setTimeout(() => {
+            if (mainPageRef.current?.btn1Event) {
+                mainPageRef.current.btn1Event(detail); // 업종 이벤트만 전달
+            }
+
             if (mainPageRef.current?.btn2Event) {
-                if (polygonCoordinates) {
-                    // 다각형이 설정되어 있는 경우
-                    mainPageRef.current.btn2Event(detail, "다각형 설정", polygonCoordinates);
+                if (polygonCoordinates && Object.keys(polygonCoordinates).length > 0) {
+                    mainPageRef.current.btn2Event("다각형 설정", polygonCoordinates);
                 } else if (selectedDong) {
-                    // 동이 선택되어 있는 경우
-                    mainPageRef.current.btn2Event(detail, selectedDong);
-                } else {
-                    // 아무것도 선택되어 있지 않은 경우
-                    mainPageRef.current.btn2Event(detail, text2);
+                    mainPageRef.current.btn2Event(selectedDong);
+                } else if (text2) {
+                    mainPageRef.current.btn2Event(text2);
                 }
             }
         }, 100);
@@ -191,13 +175,17 @@ const Home = () => {
         setHoveredMain(null);
 
         if (option !== '동 설정' && option !== '다각형 설정') {
-            setSelectedDong(option);  // 선택된 동 저장
-            setPolygonCoordinates(null);  // 다각형 좌표 초기화
+            setSelectedDong(option);
+            setPolygonCoordinates(null);
         }
 
         setTimeout(() => {
             if (mainPageRef.current?.btn2Event) {
-                mainPageRef.current.btn2Event(text1, option);
+                if (option === '다각형 설정' && polygonCoordinates) {
+                    mainPageRef.current.btn2Event("다각형 설정", polygonCoordinates);
+                } else {
+                    mainPageRef.current.btn2Event(option);
+                }
             }
         }, 100);
     };
@@ -209,6 +197,12 @@ const Home = () => {
 
     return (
         <div className="home-container">
+
+            <DetailPage
+                selectedRegion={selectedRegion}
+                selectedDong={selectedDong}
+                selectedCategory={selectedCategory}
+            />
             <LocationProvider>
                 <div>
                     {/* 부동산 정보 토글 버튼 */}
@@ -237,29 +231,6 @@ const Home = () => {
                     />
                 </div>
             </LocationProvider>
-            {/* <MapPage
-                ref={mainPageRef}
-                selectedCategory={selectedCategory}
-                selectedRegion={selectedRegion}
-                selectedDong={selectedDong}
-                업종코드={업종코드}
-                onPolygonSet={handlePolygonSet}
-            />
-            <button
-                className={`real-estate-toggle ${showRealEstate ? 'active' : ''}`}
-                onClick={() => setShowRealEstate(!showRealEstate)}
-            >
-                부동산정보
-            </button>
-            <RealEstate
-                isOpen={showRealEstate}
-                onClose={() => setShowRealEstate(!showRealEstate)}
-            /> */}
-            <DetailPage
-                selectedRegion={selectedRegion}
-                selectedDong={selectedDong}
-                selectedCategory={selectedCategory}
-            />
 
             {/* 지도 위에 떠있는 버튼들 */}
             <div className="ui-overlay">

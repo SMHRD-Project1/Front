@@ -83,12 +83,12 @@ const RealEstate = ({ isOpen }) => {
             style={{ '--detail-page-width': `${detailPageWidth}px` }}
         >
             <div className="real-estate-header">
-                <h2>제목</h2>
+                <h2>매매 정보</h2>
             </div>
 
             <div className="real-estate-content">
                 <div className="real-estate-section">
-                    <h3>매매 정보</h3>
+                    {/* <h3>매매 정보</h3> */}
                     <div className="data-list">
                         <ul>
                             {filteredData.length === 0 ? (

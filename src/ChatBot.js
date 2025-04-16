@@ -110,7 +110,7 @@ function App() {
       <div className="chatArea" ref={chatAreaRef}>
         {messages.map((msg, index) => (
           <div key={index} className={msg.sender === 'user' ? 'userMessage' : 'botMessage'}>
-            {msg.sender === 'user' ? '나: ' : '창창이: '}
+            {msg.sender === 'user' ? '' : ''}
             {msg.text}
           </div>
         ))}

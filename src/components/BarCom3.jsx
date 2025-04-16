@@ -14,15 +14,45 @@ const GenderPopulationChart = ({ dong }) => {
     if (!data) return;
 
     const option = {
-      title: { text: `${dong} 성별 거주 인구` },
-      tooltip: { trigger: 'axis' },
-      legend: { data: ['남', '여', '전체'] },
+      title: { 
+        text: `${dong} 성별 유동 인구`,
+        left: 'center',
+        top: '5%',
+        textStyle: {
+          fontSize: 18,
+          fontWeight: 'bold'
+        }
+      },
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: { type: 'shadow' }
+      },
+      legend: {
+        data: ['남', '여', '전체'],
+        top: '18%',
+        left: 'center',
+        textStyle: {
+          fontSize: 12
+        }
+      },
+      grid: {
+        left: '5%',
+        right: '5%',
+        top: '35%',
+        bottom: '5%',
+        containLabel: true
+      },
       xAxis: {
         type: 'category',
         data: ['인구']
       },
       yAxis: {
-        type: 'value'
+        type: 'value',
+        scale: true,
+        axisLabel: {
+          formatter: '{value} 명',
+          fontWeight: 'bold'
+        }
       },
       series: [
         {
@@ -51,7 +81,7 @@ const GenderPopulationChart = ({ dong }) => {
     return () => chart.dispose();
   }, [dong]);
 
-  return <div ref={chartRef} style={{ width: '100%', height: '300px' }} />;
+  return <div ref={chartRef} style={{ width: '300px', height: '200px', backgroundColor: '#f9f9f9', borderRadius: '8px' }} />;
 };
 
 export default GenderPopulationChart;
