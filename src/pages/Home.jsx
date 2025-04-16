@@ -97,7 +97,8 @@ const Home = () => {
             const kakaoId = response.profile.id;
             const nickname = response.profile.properties.nickname;
 
-            // 서버에 로그인 요청
+            console.log("로그인 성공 - 카카오 ID:", kakaoId);  // ✅ 여기 추가
+
             const serverResponse = await axios.post('http://localhost:8088/controller/login', {
                 id: kakaoId,
                 nickname: nickname
@@ -105,7 +106,6 @@ const Home = () => {
 
             if (serverResponse.data) {
                 setIsLoggedIn(true);
-                // 로컬 스토리지에 로그인 정보 저장
                 localStorage.setItem('isLoggedIn', 'true');
                 localStorage.setItem('userInfo', JSON.stringify({ id: kakaoId, nickname: nickname }));
             }
@@ -113,6 +113,18 @@ const Home = () => {
             console.error('로그인 처리 중 오류가 발생했습니다:', error);
         }
     };
+
+    useEffect(() => {
+        const savedLoginState = localStorage.getItem('isLoggedIn');
+        const savedUserInfo = localStorage.getItem('userInfo');
+
+        if (savedLoginState === 'true' && savedUserInfo) {
+            setIsLoggedIn(true);
+            const user = JSON.parse(savedUserInfo);
+            console.log("재접속 로그인 - 저장된 카카오 ID:", user.id);  // ✅ 여기 추가
+        }
+    }, []);
+
 
     // 로그아웃 처리
     const handleLogout = () => {
@@ -137,7 +149,7 @@ const Home = () => {
 
     // 다각형 좌표를 저장하는 함수
     const handlePolygonSet = (coordinates) => {
-        console.log('다각형 좌표 저장:', coordinates);
+        // console.log('다각형 좌표 저장:', coordinates);
         setPolygonCoordinates(coordinates);
     };
 
@@ -198,12 +210,13 @@ const Home = () => {
     return (
         <div className="home-container">
 
-            <DetailPage
-                selectedRegion={selectedRegion}
-                selectedDong={selectedDong}
-                selectedCategory={selectedCategory}
-            />
             <LocationProvider>
+                <DetailPage
+                    selectedRegion={selectedRegion}
+                    selectedDong={selectedDong}
+                    selectedCategory={selectedCategory}
+                    polygonCoordinates={polygonCoordinates}
+                />
                 {/* 부동산 정보 토글 버튼 */}
                 <button
                     className={`real-estate-toggle ${showRealEstate ? 'active' : ''}`}
@@ -293,7 +306,7 @@ const Home = () => {
                             {showRegionMenu && (
                                 <div className="category-menu-container region-menu">
                                     <div className="category-menu">
-                                        {["동 설정", "범위 설정", "다각형 설정"].map((option) => (
+                                        {["동 설정", "다각형 설정"].map((option) => (
                                             <div
                                                 key={option}
                                                 className="category-item"

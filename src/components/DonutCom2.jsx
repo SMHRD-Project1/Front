@@ -65,7 +65,9 @@ const DonutCom2 = ({ dong, selectedCategory }) => {
           fontSize: 10
         },
         formatter: (name) => {
-          const item = pieData.find(d => d.name === name);
+          const originalName = name.split(' (')[0]; // "음식점 (34개)" → "음식점"
+          const item = pieData.find(d => d.name.startsWith(originalName));
+          if (!item) return name; // 혹시 몰라 예외 처리
           const percent = ((item.value / total) * 100).toFixed(1);
           return `${name} ${percent}%`;
         }
@@ -100,7 +102,7 @@ const DonutCom2 = ({ dong, selectedCategory }) => {
     chart.setOption(option);
 
     // 콘솔에 전체 업종 데이터 출력
-    console.log('전체 업종 데이터:', sortedCategories);
+    // console.log('전체 업종 데이터:', sortedCategories);
 
     return () => chart.dispose();
   }, [dong, selectedCategory]);

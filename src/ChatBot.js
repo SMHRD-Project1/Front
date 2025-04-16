@@ -40,7 +40,7 @@ function App() {
       body: JSON.stringify({ message: question, sessionId: sessionId })
     }).then((res) => res.json())
       .then((data) => {
-        console.log("Dialogflow 응답 :", data);
+        // console.log("Dialogflow 응답 :", data);
         
         setDF(data);
         if (data.parameters?.fields?.dong?.stringValue){
@@ -57,16 +57,16 @@ function App() {
         
         const botMessage = { sender: "chang", text: data.answer };
         setMessages((prev) => [...prev, botMessage])
-      }).catch((err) => console.log("에러발생", err))
+      }).catch((err) => console.log("에러발생1", err))
 
     setFlag("true");
     setQuestion("");  // 입력창 비우기
   }
 
   useEffect(() => {
-    console.log(flag)
-    console.log(payRef)
-    console.log(dongRef)
+    console.log('flag', flag)
+    console.log('payRef', payRef)
+    console.log('dongRef', dongRef)
 
     if (flag && payRef && dongRef){
       console.log("in", question)
@@ -87,12 +87,11 @@ function App() {
   }, [DF])
 
   useEffect(() => {
-    fetch("http://localhost:3002/api/estate-info")
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("추천 부동산:", data);
-        setEstate(data);
-      }).catch((err) => console.error("에러발생", err))
+    const initialMessage = {
+      sender: 'chang',
+      text: '안녕하세요!\n행정동과 업종을 알려주세요!'
+    };
+    setMessages([initialMessage]);
   }, []);
 
   // 채팅 영역에 대한 ref 추가
@@ -110,15 +109,19 @@ function App() {
       <div className="chatArea" ref={chatAreaRef}>
         {messages.map((msg, index) => (
           <div key={index} className={msg.sender === 'user' ? 'userMessage' : 'botMessage'}>
-            {msg.sender === 'user' ? '' : ''}
-            {msg.text}
-          </div>
+          {msg.text.split('\n').map((line, i) => (
+            <React.Fragment key={i}>
+              {line}
+              <br />
+            </React.Fragment>
+          ))}
+        </div>
         ))}
       </div>
 
       <div className='inputChat'>
         <input type='text'
-          placeholder='할 말 입력'
+          placeholder='  텍스트를 입력해주세요'
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
           onKeyDown={handleKeyDown}

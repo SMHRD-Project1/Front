@@ -26,13 +26,13 @@ const RealEstate = ({ isOpen }) => {
 
     const { polygonCoords } = useLocation(); // ✅ context에서 path 받아오기
 
-    useEffect(() => {
-        console.log('useLocation 데이터:', { polygonCoords });
-    }, [polygonCoords]);
+    // useEffect(() => {
+    //     console.log('useLocation 데이터:', { polygonCoords });
+    // }, [polygonCoords]);
 
-    useEffect(() => {
-        console.log('필터링 결과:', filteredData);
-    }, [filteredData]);
+    // useEffect(() => {
+        // console.log('필터링 결과:', filteredData);
+    // }, [filteredData]);
 
     // ✅ 좌표 필터링
     useEffect(() => {
@@ -46,7 +46,7 @@ const RealEstate = ({ isOpen }) => {
             const lng = parseFloat(item.경도); // 경도
             const isInside = isPointInsidePolygon([lng, lat], polygonCoords);
 
-            console.log(`[${item.제목}] lat: ${lat}, lon: ${lng}, 포함 여부: ${isInside}`);
+            // console.log(`[${item.제목}] lat: ${lat}, lon: ${lng}, 포함 여부: ${isInside}`);
 
             return isInside;
         });

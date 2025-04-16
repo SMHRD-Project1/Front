@@ -464,3 +464,35 @@ h2 {
     font-size: 1.1rem;
     color: #666;
 }
+
+
+/* 동근이 관심버튼 추가 */
+.chart-container {
+    position: relative;
+}
+
+.interest-button {
+    position: absolute;
+    top: 17px;
+    right: 10px;
+
+    background-color: #427ec4;
+    color: rgb(255, 255, 255);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.interest-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+.interest-button:active {
+    background-color: #004a9f;
+    transform: translateY(0);
+}

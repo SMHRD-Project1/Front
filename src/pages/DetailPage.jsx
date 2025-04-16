@@ -2,6 +2,8 @@ import axios from 'axios'
 import React, { useState, useRef, useEffect } from 'react';
 import '../styles/DetailPage.css';
 import ChartComponent from '../components/ChartComponent';
+import { useLocation } from '../contexts/LocationContext';
+
 import LineCom1 from '../components/LineCom1';
 import LineCom2 from '../components/LineCom2';
 import LineCom3 from '../components/LineCom3';
@@ -17,7 +19,8 @@ import BarCom1 from '../components/BarCom1';
 import BarCom2 from '../components/BarCom2';
 import BarCom3 from '../components/BarCom3';
 
-const DetailPage = ({ selectedRegion, selectedDong, selectedCategory, data }) => {
+const DetailPage = ({ selectedRegion, selectedDong, selectedCategory }) => {
+  const { polygonCoords } = useLocation(); // ✅ context에서 path 받아오기
   const [isOpen, setIsOpen] = useState(false);
   const [width, setWidth] = useState(400);
   const detailPageRef = useRef(null);
@@ -59,6 +62,56 @@ const DetailPage = ({ selectedRegion, selectedDong, selectedCategory, data }) =>
     };
   }, []);
 
+  const handleInterestSave = async () => {
+    try {
+      // 로그인 정보 가져오기
+      const userInfo = localStorage.getItem('userInfo');
+      if (!userInfo) {
+        alert("로그인이 필요한 서비스입니다.");
+        return;
+      }
+
+      // 사용자 정보 파싱
+      const parsedUserInfo = JSON.parse(userInfo);
+      const userId = parsedUserInfo.id;
+
+      // 선택된 카테고리나 지역이 없으면 알림
+      if (selectedCategory === "업종" || (!selectedDong)) {
+        alert("업종과 지역(행정구역 또는 다각형 영역)을 선택해주세요.");
+        return;
+      }
+
+      // polygonCoords가 있으면 해당 정보를 map으로 변환
+      const polygon = polygonCoords.map(([lng, lat]) => ({ longitude: lng, latitude: lat }));
+
+
+      // POST 요청 보내기
+      axios.post(
+        'http://localhost:8088/controller/saveMyPage',
+        {
+          id: userId,
+          polygon: polygon,
+          region: selectedDong,
+          category: selectedCategory
+        }
+      )
+        .then((res) => {
+          console.log(res)
+          // 서버 응답 처리
+          if (res.data === true) {
+            alert('관심 정보가 성공적으로 저장되었습니다.');
+          } else {
+            alert('서버 오류가 발생했습니다. 다시 시도해주세요.');
+          }
+        })
+
+
+    } catch (error) {
+      console.error('관심 정보 저장 중 오류 발생:', error);
+      alert(`관심 정보 저장에 실패했습니다.\n오류 내용: ${error.message}`);
+    }
+  };
+
   return (
     <>
       <button
@@ -79,12 +132,16 @@ const DetailPage = ({ selectedRegion, selectedDong, selectedCategory, data }) =>
 
         <div className="real-estate-header">
           <h2>상세 정보</h2>
+          <button
+            className="interest-button"
+            onClick={handleInterestSave}
+          >
+            관심 저장
+          </button>
         </div>
 
 
         <div className="content-container">
-
-
           {selectedRegion && selectedDong ? (
             <>
               <h3>{selectedDong}</h3>

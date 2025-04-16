@@ -291,7 +291,6 @@ const MainPage = forwardRef(({ 업종코드 }, ref) => {
 
   const btn2Event = (text1, text2) => {
     clearAll();
-    console.log()
     if (text2 === '다각형 설정') {
       btnFlagRef.current = true;
     } else {
@@ -318,25 +317,25 @@ const MainPage = forwardRef(({ 업종코드 }, ref) => {
 // 외부에서 접근 가능한 함수들
 useImperativeHandle(ref, () => ({
   btn1Event: (업종) => {
-    console.log("✅ [MainPage] 버튼1 이벤트 실행됨 - 업종:", 업종);
+    // console.log("✅ [MainPage] 버튼1 이벤트 실행됨 - 업종:", 업종);
     // 필요 시 업종 관련 로직 추가
   },
   btn2Event: (지역또는다각형, 좌표 = null) => {
-    console.log("✅ [MainPage] 버튼2 이벤트 실행됨 - 지역/다각형:", 지역또는다각형, "좌표:", 좌표);
+    // console.log("✅ [MainPage] 버튼2 이벤트 실행됨 - 지역/다각형:", 지역또는다각형, "좌표:", 좌표);
     clearAll();
 
     if (지역또는다각형 === '다각형 설정') {
       btnFlagRef.current = true;
-      console.log("🟨 [MainPage] 다각형 설정 모드 진입");
+      // console.log("🟨 [MainPage] 다각형 설정 모드 진입");
 
       if (좌표 && Array.isArray(좌표)) {
         const path = 좌표.map(([lng, lat]) => new naver.maps.LatLng(lat, lng));
-        console.log("🟩 [MainPage] 좌표 기반으로 다각형 그리기");
+        // console.log("🟩 [MainPage] 좌표 기반으로 다각형 그리기");
         drowPolygon(path);
       }
     } else {
       btnFlagRef.current = false;
-      console.log("🟦 [MainPage] 행정동 설정 시도:", 지역또는다각형);
+      // console.log("🟦 [MainPage] 행정동 설정 시도:", 지역또는다각형);
 
       const matchedDong = dong.find(item => item.properties.adm_nm === 지역또는다각형);
       if (matchedDong) {
@@ -344,10 +343,10 @@ useImperativeHandle(ref, () => ({
         const convertedPath = dongPositionsRef.current.map(coord =>
           new naver.maps.LatLng(coord[1], coord[0])
         );
-        console.log("🟧 [MainPage] 행정동 기반으로 폴리곤 그리기:", 지역또는다각형);
+        // console.log("🟧 [MainPage] 행정동 기반으로 폴리곤 그리기:", 지역또는다각형);
         drowPolygon(convertedPath);
       } else {
-        console.warn("❌ [MainPage] 해당 행정동을 찾을 수 없음:", 지역또는다각형);
+        // console.warn("❌ [MainPage] 해당 행정동을 찾을 수 없음:", 지역또는다각형);
       }
     }
   }
