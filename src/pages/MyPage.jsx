@@ -17,12 +17,17 @@ import BarCom3 from '../components/BarCom3';
 
 const MyPage = () => {
   const navigate = useNavigate();
+
   const [selectedRegions, setSelectedRegions] = useState([]); // { category, region } 객체 리스트
   const [list, setList] = useState([]); // 관심 항목 리스트
   const cardsRef = useRef(null);
+  const [isOpen, setIsOpen] = useState(true); // 사이드바 상태 추가
   const userInfo = localStorage.getItem('userInfo');
   const parsedUserInfo = JSON.parse(userInfo);
   const userId = parsedUserInfo.id;
+  const [deleted, setDeleted] = useState(false)
+
+
 
   useEffect(() => {
     const cards = cardsRef.current;
@@ -57,7 +62,25 @@ const MyPage = () => {
       .catch((err) => {
         console.error('데이터 로딩 실패:', err);
       });
-  }, [userId]);
+  }, [userId, deleted]);
+
+  const handleDelete = async (item, e) => {
+    e.stopPropagation();
+    try {
+      axios.post('http://localhost:8088/controller/deleteInterest', {
+        id: userId,
+        category: item.category,
+        region: item.region
+      });
+
+      // 0417 남규 수정 서버 응답 성공 시 바로 상태 업데이트
+      setList(prev => prev.filter(i => !(i.category === item.category && i.region === item.region)));
+      setSelectedRegions(prev => prev.filter(r => !(r.category === item.category && r.region === item.region)));
+
+    } catch (error) {
+      console.error('삭제 실패:', error);
+    }
+  };
 
   const handleRegionClick = (item) => {
     setSelectedRegions(prev => {
@@ -70,33 +93,46 @@ const MyPage = () => {
     });
   };
 
-
+  // 사이드바 토글 함수 추가
+  const toggleSidebar = () => {
+    setIsOpen(!isOpen);
+  };
   return (
     <div className="container">
       <div className="top-navigation">
         <button className="Button2" onClick={() => navigate('/')}>홈</button>
       </div>
 
-      <div className="sidebar">
-        <h3>관심 목록 선택</h3>
-        {list.map((item, index) => {
-          const displayName = `${item.category} ${item.region}`;
-          const isActive = selectedRegions.some(
-            r => r.category === item.category && r.region === item.region
-          );
-          return (
-            <button
-              key={index}
-              className={`region-button ${isActive ? 'active' : ''}`}
-              onClick={() => handleRegionClick(item)}
-            >
-              {displayName}
-            </button>
-          );
-        })}
+      {/* 사이드바 컨테이너 및 토글 버튼 추가 */}
+      <div className={`sidebar-container ${isOpen ? '' : 'closed'}`}>
+        <div className={`sidebar ${isOpen ? '' : 'closed'}`}>
+          <h3>관심 목록 선택</h3>
+          {list.map((item, index) => {
+            const displayName = `${item.category} ${item.region}`;
+            const isActive = selectedRegions.some(
+              r => r.category === item.category && r.region === item.region
+            );
+            return (
+              // region-button-wrapper 제거하고 직접 button 렌더링
+              <button
+                key={index} // key는 최상위 요소에 적용
+                className={`region-button ${isActive ? 'active' : ''}`}
+                onClick={() => handleRegionClick(item)}
+              >
+                {displayName}
+                <span className="delete-btn" onClick={(e) => handleDelete(item, e)}>×</span>
+              </button>
+            );
+          })}
+        </div>
+        {/* 토글 버튼 추가 */}
+        <button className="sidebar-toggle" onClick={toggleSidebar}>
+          {isOpen ? '목록닫기' : '목록보기'}
+        </button>
       </div>
 
-      <div className="main">
+      {/* 메인 컨텐츠 영역 조정 */}
+      <div className={`main ${isOpen ? '' : 'full-width'}`}>
         <div className="title">관심 지역 비교 리포트</div>
         {selectedRegions.length > 0 ? (
           <div className="cards" ref={cardsRef}>
@@ -104,38 +140,34 @@ const MyPage = () => {
               const { category, region } = item;
               const displayName = `${category} ${region}`;
 
-              console.log(`그래프 렌더링 - category: ${category}, region: ${region}`);
-
               return (
                 <div key={index} className="card">
                   <div className="chart-title">{displayName}</div>
-                  <div className="chart-container">
-                    <div id="chart" className="chart">
-                      <ChartComponent dong={category} cate={region} />
-                    </div>
+                  <h4>월 평균 매출 분석</h4>
+                  <div className="graph-group">
+                    <div><ChartComponent dong={category} cate={region} /></div>
+                  </div>
+                  <h4>매장 매출 분석</h4>
+                  <div className="graph-group">
+                    <div><LineCom1 dong={category} cate={region} /></div>
+                    <div><LineCom2 dong={category} cate={region} /></div>
                   </div>
 
-                  <h4>매출 분석</h4>
+                  <h4>배달 매출 분석</h4>
                   <div className="graph-group">
-                    <div className='graph'><LineCom1 dong={category} cate={region} /></div>
-                    <div className='graph'><LineCom2 dong={category} cate={region} /></div>
-                  </div>
-
-                  <h4>배달 분석</h4>
-                  <div className="graph-group">
-                    <div className='graph'><LineCom3 dong={category} cate={region} /></div>
-                    <div className='graph'><LineCom4 dong={category} cate={region} /></div>
-                    <div className='graph'><DonutCom1 dong={category} cate={region} /></div>
-                    <div className='graph'><LineCom5 dong={category} cate={region} /></div>
+                    <div><LineCom3 dong={category} cate={region} /></div>
+                    <div><LineCom4 dong={category} cate={region} /></div>
+                    <div><DonutCom1 dong={category} cate={region} /></div>
+                    <div><LineCom5 dong={category} cate={region} /></div>
                   </div>
 
                   <h4>유동인구</h4>
                   <div className="graph-group">
-                    <div className='graph'><LineCom6 dong={category} cate={region} /></div>
-                    <div className='graph'><BarCom1 dong={category} cate={region} /></div>
-                    <div className='graph'><BarCom2 dong={category} cate={region} /></div>
-                    <div className='graph'><BarCom3 dong={category} cate={region} /></div>
-                    <div className='graph2'><LineCom8 dong={category} cate={region} /></div>
+                    <div><LineCom6 dong={category} cate={region} /></div>
+                    <div><BarCom1 dong={category} cate={region} /></div>
+                    <div><BarCom2 dong={category} cate={region} /></div>
+                    <div><BarCom3 dong={category} cate={region} /></div>
+                    <div><LineCom8 dong={category} cate={region} /></div>
                   </div>
                 </div>
               );

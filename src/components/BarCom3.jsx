@@ -15,7 +15,7 @@ const GenderPopulationChart = ({ dong }) => {
 
     const option = {
       title: { 
-        text: `${dong} 성별 유동 인구`,
+        text: `${dong} 성별 거주 인구`,
         left: 'center',
         top: '5%',
         textStyle: {

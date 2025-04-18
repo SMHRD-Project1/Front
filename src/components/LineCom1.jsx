@@ -29,7 +29,7 @@ const LineCom1 = ({ dong, cate }) => {
     const option = {
       title: { 
         text: `${dong} - ${cate} 매장`,
-        subtext: `평균매출: ${averageSales} 만원`,
+        subtext: `평균매출: ${Math.floor(avgSales)} 만원`,
         left: 'center',
         top: '5%',
         subtextStyle: {

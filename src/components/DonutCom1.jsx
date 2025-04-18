@@ -43,8 +43,7 @@ const ChartComponent = ({ dong, cate }) => {
         left: 'center'
       },
       title: {
-        text: '남/녀 배달 비율',
-        subtext: `${dong} - ${cate}`,
+        text: '남/녀 배달 비율' ,
         left: 'center',
         top: '5%',
         textStyle: {
@@ -61,7 +60,7 @@ const ChartComponent = ({ dong, cate }) => {
         {
           name: '배달 비율',
           type: 'pie',
-          radius: ['40%', '100%'],  // 도넛 차트의 크기를 키움
+          radius: ['40%', '110%'],  // 도넛 차트의 크기를 키움
           center: ['50%', '80%'],
           startAngle: 180,
           endAngle: 360,

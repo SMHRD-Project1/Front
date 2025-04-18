@@ -14,7 +14,7 @@
     transition: transform 0.3s ease;
     z-index: 999;
     /* 부동산 버튼(1005)과 부동산 페이지(998)보다 낮게 설정 */
-    overflow-y: auto;
+    overflow-y: hidden;
 }
 
 .detail-page.open {
@@ -38,7 +38,9 @@
     flex-direction: column;
     gap: 20px;
     padding-left: 50px;
-    padding-bottom: 20px;
+    padding-bottom: 150px;
+    overflow-y: auto;
+    height: calc(100vh - 140px);
 }
 
 .graphs-container {
@@ -130,11 +132,8 @@ h2 {
     text-align: center;
 }
 
-.chart-container {
-    display: flex;
-    justify-content: center;
-    width: 300px;
-    height: 200px;
+.chartCon {
+    padding-left: 20px;
 }
 
 .chart {
@@ -168,7 +167,6 @@ h2 {
 .data-list li:last-child {
     border-bottom: none;
 }
-
 
 /* 상세 정보 영역의 최소 너비 설정 */
 .detail-page {
@@ -209,23 +207,6 @@ h2 {
     color: #333;
 }
 
-/* 스크롤바 스타일링 */
-.detail-page::-webkit-scrollbar {
-    width: 8px;
-}
-
-.detail-page::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-
-.detail-page::-webkit-scrollbar-thumb {
-    background: #c5c5d2;
-    border-radius: 4px;
-}
-
-.detail-page::-webkit-scrollbar-thumb:hover {
-    background: #a5a5b5;
-}
 
 .detail-toggle-button {
     position: absolute;
@@ -351,7 +332,8 @@ h2 {
     z-index: 998;
     transform: translateX(-100%);
     visibility: hidden;
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 /* 상세페이지가 닫혀있을 때 부동산 정보 열기 */
@@ -379,9 +361,12 @@ h2 {
 }
 
 .real-estate-header {
+    position: sticky;
+    top: 0;
     padding: 20px;
     border-bottom: 1px solid #e5e5e5;
     background-color: white;
+    z-index: 1;
 }
 
 .real-estate-header h2 {
@@ -427,20 +412,37 @@ h2 {
 }
 
 /* 스크롤바 스타일링 */
-.real-estate-container::-webkit-scrollbar {
+.content-container::-webkit-scrollbar {
     width: 8px;
 }
 
-.real-estate-container::-webkit-scrollbar-track {
+.content-container::-webkit-scrollbar-track {
     background: #f1f1f1;
 }
 
-.real-estate-container::-webkit-scrollbar-thumb {
+.content-container::-webkit-scrollbar-thumb {
     background: #c5c5d2;
     border-radius: 4px;
 }
 
-.real-estate-container::-webkit-scrollbar-thumb:hover {
+.content-container::-webkit-scrollbar-thumb:hover {
+    background: #a5a5b5;
+}
+
+.real-estate-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.real-estate-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.real-estate-content::-webkit-scrollbar-thumb {
+    background: #c5c5d2;
+    border-radius: 4px;
+}
+
+.real-estate-content::-webkit-scrollbar-thumb:hover {
     background: #a5a5b5;
 }
 
@@ -467,7 +469,7 @@ h2 {
 
 
 /* 동근이 관심버튼 추가 */
-.chart-container {
+.chartCon {
     position: relative;
 }
 
